@@ -1,58 +1,39 @@
 package plasma
 
 import (
-	"github.com/ethereum/go-ethereum/log"
-	"net"
+	"fmt"
+	"golang.org/x/exp/slog"
 	"net/http"
-	"plasma-da/da"
-	"strconv"
+	"plasma/config"
+	"plasma/da"
 )
 
 type DAServer struct {
-	logger     log.Logger
-	endpoint   string
-	store      da.KVStore
-	httpServer *http.Server
-	listener   net.Listener
+	logger *slog.Logger
+	config config.App
+	store  da.KVStore
 }
 
-func NewDAServer(host string, port int, store da.KVStore, logger log.Logger) *DAServer {
-	endpoint := net.JoinHostPort(host, strconv.Itoa(port))
-	return &DAServer{
-		logger:   logger,
-		endpoint: endpoint,
-		store:    store,
-		httpServer: &http.Server{
-			Addr: endpoint,
-		},
+func NewDAServer(cfgApp config.App, store da.KVStore, logger *slog.Logger) *DAServer {
+	s := &DAServer{
+		logger: logger,
+		config: cfgApp,
+		store:  store,
 	}
+
+	http.HandleFunc("/get", s.HandleGet)
+	http.HandleFunc("/put", s.HandlePut)
+
+	return s
 }
 
-func (d *DAServer) Start() error {
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/get/", d.HandleGet)
-	mux.HandleFunc("/put/", d.HandlePut)
-
-	d.httpServer.Handler = mux
-
-	listener, err := net.Listen("tcp", d.endpoint)
-	if err != nil {
-		return err
+func (d *DAServer) Start() {
+	port := fmt.Sprintf(":%s", d.config.HttpPort)
+	d.logger.Info("starting server", "port", port)
+	if err := http.ListenAndServe(port, nil); err != nil {
+		d.logger.Error("server start failed", "err", err)
+		panic(err)
 	}
-	d.listener = listener
-
-	go func() {
-		if err := d.httpServer.Serve(d.listener); err != nil {
-			d.logger.Error("failed to serve", "err", err)
-		}
-	}()
-
-	return nil
-}
-
-func (d *DAServer) Stop() error {
-	return d.httpServer.Close()
 }
 
 func (d *DAServer) HandleGet(w http.ResponseWriter, r *http.Request) {
