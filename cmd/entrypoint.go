@@ -1,0 +1,50 @@
+package main
+
+import (
+	"fmt"
+	plasma "plasma-da"
+	"plasma-da/da"
+
+	"github.com/urfave/cli/v2"
+
+	oplog "github.com/ethereum-optimism/optimism/op-service/log"
+	"github.com/ethereum-optimism/optimism/op-service/opio"
+)
+
+func StartDAServer(cliCtx *cli.Context) error {
+	if err := CheckRequired(cliCtx); err != nil {
+		return err
+	}
+
+	cfg := ReadCLIConfig(cliCtx)
+	if err := cfg.Check(); err != nil {
+		return err
+	}
+
+	logCfg := oplog.ReadCLIConfig(cliCtx)
+
+	l := oplog.NewLogger(oplog.AppOut(cliCtx), logCfg)
+	oplog.SetGlobalLogHandler(l.Handler())
+
+	l.Info("Initializing Plasma DA server...")
+
+	var store da.KVStore
+
+	server := plasma.NewDAServer(cliCtx.String(ListenAddrFlagName), cliCtx.Int(PortFlagName), store, l)
+
+	if err := server.Start(); err != nil {
+		return fmt.Errorf("failed to start the DA server")
+	} else {
+		l.Info("Started DA Server")
+	}
+
+	defer func() {
+		if err := server.Stop(); err != nil {
+			l.Error("failed to stop DA server", "err", err)
+		}
+	}()
+
+	opio.BlockOnInterrupts()
+
+	return nil
+}
