@@ -14,7 +14,7 @@ func main() {
 	viper.AutomaticEnv()
 	l := slog.Default()
 	cfgApp := config.NewAppConfig()
-	store := da.NewFileStore("data.json")
+	store := da.NewFileStore("/Users/yeshidolma/working/upnode/plasma-da/da/data")
 	daServer := plasma.NewDAServer(cfgApp, store, l)
 	daServer.Start()
 }

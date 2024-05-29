@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"os"
 	"path"
+	"plasma/common"
 )
 
 type FileStore struct {
@@ -21,7 +22,7 @@ func (s *FileStore) Get(_ context.Context, key []byte) ([]byte, error) {
 	data, err := os.ReadFile(s.fileName(key))
 	if err != nil {
 		if os.IsNotExist(err) {
-			return nil, ErrNotFound
+			return nil, common.ErrNotFound
 		}
 		return nil, err
 	}

@@ -1,9 +1,14 @@
 package plasma
 
 import (
+	"errors"
 	"fmt"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"golang.org/x/exp/slog"
+	"io"
 	"net/http"
+	"path"
+	"plasma/common"
 	"plasma/config"
 	"plasma/da"
 )
@@ -21,14 +26,14 @@ func NewDAServer(cfgApp config.App, store da.KVStore, logger *slog.Logger) *DASe
 		store:  store,
 	}
 
-	http.HandleFunc("/get", s.HandleGet)
-	http.HandleFunc("/put", s.HandlePut)
+	http.HandleFunc("/get/", s.HandleGet)
+	http.HandleFunc("/put/", s.HandlePut)
 
 	return s
 }
 
 func (d *DAServer) Start() {
-	port := fmt.Sprintf(":%s", d.config.HttpPort)
+	port := fmt.Sprintf(":%d", d.config.Port)
 	d.logger.Info("starting server", "port", port)
 	if err := http.ListenAndServe(port, nil); err != nil {
 		d.logger.Error("server start failed", "err", err)
@@ -37,9 +42,70 @@ func (d *DAServer) Start() {
 }
 
 func (d *DAServer) HandleGet(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("get\n"))
+	route := path.Dir(r.URL.Path)
+	if route != "/get" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	key := path.Base(r.URL.Path)
+	comm, err := hexutil.Decode(key)
+	if err != nil {
+		d.logger.Error("Failed to decode commitment", "err", err, "key", key)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	input, err := d.store.Get(r.Context(), comm)
+	if err != nil && errors.Is(err, common.ErrNotFound) {
+		d.logger.Error("Commitment not found", "key", key, "error", err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		d.logger.Error("Failed to read commitment", "err", err, "key", key)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if _, err := w.Write(input); err != nil {
+		d.logger.Error("Failed to write pre-image", "err", err, "key", key)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (d *DAServer) HandlePut(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("put\n"))
+	d.logger.Info("handling put request", "url", r.URL.Path)
+
+	route := path.Dir(r.URL.Path)
+	d.logger.Info("route", "route", route)
+	if route != "/put" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	input, err := io.ReadAll(r.Body)
+	if err != nil {
+		d.logger.Error("Failed to read request body", "err", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	key := path.Base(r.URL.Path)
+	comm, err := hexutil.Decode(key)
+	if err != nil {
+		d.logger.Error("Failed to decode commitment", "err", err, "key", key)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if err := d.store.Put(r.Context(), comm, input); err != nil {
+		d.logger.Error("Failed to store commitment to the DA server", "err", err, "key", key)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
