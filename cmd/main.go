@@ -12,9 +12,18 @@ var Version = "v0.0.1"
 
 func main() {
 	viper.AutomaticEnv()
-	l := slog.Default()
 	cfgApp := config.NewAppConfig()
-	store := da.NewFileStore("/Users/yeshidolma/working/upnode/plasma-da/da/data")
-	daServer := plasma.NewDAServer(cfgApp, store, l)
+	store, err := da.NewCelestiaStore(da.CelestiaCfg{
+		Rpc:                 "localhost",
+		AuthToken:           "",
+		Namespace:           "",
+		EthFallbackDisabled: false,
+		MaxBlobSize:         0,
+		GasPrice:            0,
+	})
+	if err != nil {
+		panic(err)
+	}
+	daServer := plasma.NewDAServer(cfgApp, store, slog.Default())
 	daServer.Start()
 }
