@@ -2,3 +2,4 @@
 .env
 cmd/cmd
 da/data
+da/plasma-da

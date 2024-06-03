@@ -3,9 +3,11 @@ package da
 import (
 	"context"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"github.com/rollkit/go-da"
 	"github.com/rollkit/go-da/proxy"
+	"os"
 	"time"
 )
 
@@ -17,6 +19,8 @@ var ErrFailedToSubmit = errors.New("failed to submit blob")
 
 var ErrBlobNotFound = errors.New("blob: not found")
 
+var DefaultDataMapPath = "plasma-da/data/celestia"
+
 type CelestiaCfg struct {
 	Rpc                 string
 	AuthToken           string
@@ -26,11 +30,19 @@ type CelestiaCfg struct {
 	GasPrice            float64
 }
 
+type CelestiaMap struct {
+	// key is the key of the blob
+	Key []da.ID `json:"key"`
+}
+
 type CelestiaStore struct {
 	Client     da.DA
 	GetTimeout time.Duration
 	Namespace  da.Namespace
 	cfg        CelestiaCfg
+
+	// template save mapping key with ids into file
+	fileStore FileStore
 }
 
 // NewCelestiaStore creates a new CelestiaStore.
@@ -44,18 +56,38 @@ func NewCelestiaStore(cfg CelestiaCfg) (*CelestiaStore, error) {
 	if err != nil {
 		return nil, err
 	}
+	if _, err := os.Stat(DefaultDataMapPath); os.IsNotExist(err) {
+		os.MkdirAll(DefaultDataMapPath, 0755)
+	}
 
 	return &CelestiaStore{
 		Client:     client,
 		GetTimeout: time.Minute,
 		Namespace:  ns,
 		cfg:        cfg,
+		fileStore:  FileStore{directory: DefaultDataMapPath},
 	}, nil
 }
 
 func (c *CelestiaStore) Get(ctx context.Context, key []byte) ([]byte, error) {
-	// TODO: implement me
-	panic("not implemented")
+	// get ids from data map
+	dataRead, err := c.fileStore.Get(ctx, key)
+	if err != nil {
+		return nil, err
+	}
+
+	var dataMap CelestiaMap
+	if err := json.Unmarshal(dataRead, &dataMap); err != nil {
+		return nil, err
+	}
+	dataBlob, err := c.Client.Get(ctx, dataMap.Key, c.Namespace)
+	if err != nil {
+		return nil, err
+	}
+	if len(dataBlob) == 0 {
+		return nil, ErrBlobNotFound
+	}
+	return dataBlob[0], nil
 }
 
 func (c *CelestiaStore) Put(ctx context.Context, key []byte, value []byte) error {
@@ -75,7 +107,16 @@ func (c *CelestiaStore) Put(ctx context.Context, key []byte, value []byte) error
 		return ErrFailedToSubmit
 	}
 
-	// TODO: mapping key with ids
+	dataMap := CelestiaMap{
+		Key: ids,
+	}
+	dataWrite, err := json.Marshal(dataMap)
+	if err != nil {
+		return err
+	}
+	if err := c.fileStore.Put(ctx, key, dataWrite); err != nil {
+		return err
+	}
 
 	return nil
 }

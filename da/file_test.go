@@ -6,8 +6,10 @@ import (
 	"testing"
 )
 
+const FileData = "plasma-da/data/filestore"
+
 func TestNewFileStore(t *testing.T) {
-	store := NewFileStore("data")
+	store := NewFileStore(FileData)
 	if store == nil {
 		t.Error("expected store to be non-nil")
 	}
@@ -17,10 +19,10 @@ func TestNewFileStore(t *testing.T) {
 }
 
 func TestFileStore_Put(t *testing.T) {
-	if _, err := os.Stat("data"); os.IsNotExist(err) {
-		os.Mkdir("data", 0755)
+	if _, err := os.Stat(FileData); os.IsNotExist(err) {
+		os.MkdirAll(FileData, 0755)
 	}
-	store := NewFileStore("data")
+	store := NewFileStore(FileData)
 	err := store.Put(nil, []byte("key"), []byte("value"))
 	assert.NoError(t, err)
 
