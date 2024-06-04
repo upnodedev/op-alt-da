@@ -8,6 +8,18 @@ import (
 	"plasma/common"
 )
 
+const DaFile = "file"
+
+type FileStoreCfg struct {
+	Directory string
+}
+
+func DefaultFileStoreCfg() FileStoreCfg {
+	return FileStoreCfg{
+		Directory: "plasm-hub/data",
+	}
+}
+
 type FileStore struct {
 	directory string
 }

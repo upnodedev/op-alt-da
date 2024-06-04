@@ -7,32 +7,14 @@ import (
 )
 
 func TestNewCelestiaStore(t *testing.T) {
-	cfg := CelestiaCfg{
-		Rpc:                 "http://localhost:7980",
-		AuthToken:           "",
-		Namespace:           "",
-		EthFallbackDisabled: false,
-		MaxBlobSize:         2000,
-		GasPrice:            0,
-	}
-
-	store, err := NewCelestiaStore(cfg)
+	store, err := NewCelestiaStore(DefaultCelestiaConfig())
 	assert.NoError(t, err)
 	assert.NotEqual(t, store, nil)
 }
 
 func TestCelestiaStore_Put(t *testing.T) {
-	cfg := CelestiaCfg{
-		Rpc:                 "http://localhost:7980",
-		AuthToken:           "",
-		Namespace:           "",
-		EthFallbackDisabled: false,
-		MaxBlobSize:         2000,
-		GasPrice:            0,
-	}
-
 	ctx := context.Background()
-	store, err := NewCelestiaStore(cfg)
+	store, err := NewCelestiaStore(DefaultCelestiaConfig())
 	assert.NoError(t, err)
 
 	err = store.Put(ctx, []byte("key"), []byte("value"))

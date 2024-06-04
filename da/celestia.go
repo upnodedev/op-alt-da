@@ -7,6 +7,7 @@ import (
 	"errors"
 	"github.com/rollkit/go-da"
 	"github.com/rollkit/go-da/proxy"
+	"github.com/spf13/viper"
 	"os"
 	"time"
 )
@@ -19,7 +20,19 @@ var ErrFailedToSubmit = errors.New("failed to submit blob")
 
 var ErrBlobNotFound = errors.New("blob: not found")
 
-var DefaultDataMapPath = "plasma-da/data/celestia"
+const (
+	Rpc                 = "celestia.rpc_port"
+	AuthToken           = "celestia.auth_token"
+	Namespace           = "celestia.namespace"
+	EthFallbackDisabled = "celestia.eth_fallback_disabled"
+	MaxBlobSize         = "celestia.max_blob_size"
+	GasPrice            = "celestia.gas_price"
+)
+
+const (
+	DefaultDataMapPath = "plasma-da/data/celestia"
+	DaCelestia         = "celestia"
+)
 
 type CelestiaCfg struct {
 	Rpc                 string
@@ -28,6 +41,42 @@ type CelestiaCfg struct {
 	EthFallbackDisabled bool
 	MaxBlobSize         uint64
 	GasPrice            float64
+}
+
+func DefaultCelestiaConfig() CelestiaCfg {
+	return CelestiaCfg{
+		Rpc:                 "http://localhost:7980",
+		AuthToken:           "",
+		Namespace:           "",
+		EthFallbackDisabled: false,
+		MaxBlobSize:         2000,
+		GasPrice:            0,
+	}
+}
+
+func NewCelestiaCfg() CelestiaCfg {
+	cfg := DefaultCelestiaConfig()
+
+	if rpc := viper.GetString(Rpc); rpc != "" {
+		cfg.Rpc = rpc
+	}
+	if authToken := viper.GetString(AuthToken); authToken != "" {
+		cfg.AuthToken = authToken
+	}
+	if namespace := viper.GetString(Namespace); namespace != "" {
+		cfg.Namespace = namespace
+	}
+	if ethFallbackDisabled := viper.GetBool(EthFallbackDisabled); ethFallbackDisabled {
+		cfg.EthFallbackDisabled = ethFallbackDisabled
+	}
+	if maxBlobSize := viper.GetUint64(MaxBlobSize); maxBlobSize > 0 {
+		cfg.MaxBlobSize = maxBlobSize
+	}
+	if gasPrice := viper.GetFloat64(GasPrice); gasPrice > 0 {
+		cfg.GasPrice = gasPrice
+	}
+
+	return cfg
 }
 
 type CelestiaMap struct {

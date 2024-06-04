@@ -1,0 +1,15 @@
+[server]
+http_host = "localhost"
+http_port = 3128
+da = "celestia"
+
+[celestia]
+rpc_port = "http://localhost:7980"
+authen_token = ""
+namespace = ""
+max_block_size = 2000
+gas_price = 0
+eth_fallback_disabled = false
+
+[filestore]
+path = "/tmp/celestia"
