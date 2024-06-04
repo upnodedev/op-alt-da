@@ -8,7 +8,10 @@ import (
 	"plasma/common"
 )
 
-const DaFile = "file"
+const (
+	DaFile = "file"
+	DaPath = "filestore.path"
+)
 
 type FileStoreCfg struct {
 	Directory string
@@ -18,6 +21,16 @@ func DefaultFileStoreCfg() FileStoreCfg {
 	return FileStoreCfg{
 		Directory: "plasm-hub/data",
 	}
+}
+
+func NewFileStoreCfg() FileStoreCfg {
+	cfg := DefaultFileStoreCfg()
+
+	if daPath := os.Getenv(DaPath); daPath != "" {
+		cfg.Directory = daPath
+	}
+
+	return cfg
 }
 
 type FileStore struct {
