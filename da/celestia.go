@@ -106,7 +106,9 @@ func NewCelestiaStore(cfg CelestiaCfg) (*CelestiaStore, error) {
 		return nil, err
 	}
 	if _, err := os.Stat(DefaultDataMapPath); os.IsNotExist(err) {
-		os.MkdirAll(DefaultDataMapPath, 0755)
+		if err := os.MkdirAll(DefaultDataMapPath, 0755); err != nil {
+			return nil, err
+		}
 	}
 
 	return &CelestiaStore{
