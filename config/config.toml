@@ -4,9 +4,9 @@ http_port = 3128
 da = "celestia"
 
 [celestia]
-rpc_port = "http://localhost:7980"
-authen_token = ""
-namespace = ""
+rpc_port = "http://135.181.134.150:11758"
+auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJwdWJsaWMiLCJyZWFkIiwid3JpdGUiXX0.VALq1CTp63oph5uHPL8t0ypNiMZVMtgZeoUFbHcTwCY"
+namespace = "0000000000000000000000000000000000000000000898989898989999"
 max_block_size = 2000
 gas_price = 0
 eth_fallback_disabled = false

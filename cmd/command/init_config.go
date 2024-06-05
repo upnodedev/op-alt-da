@@ -2,9 +2,10 @@ package command
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
 	"strings"
+
+	"github.com/spf13/cobra"
 )
 
 const DefaultHomeDir = ".plasma-hub"
@@ -16,7 +17,7 @@ da = "file"
 
 [celestia]
 rpc_port = "http://localhost:7980"
-authen_token = ""
+auth_token = ""
 namespace = ""
 max_block_size = 2000
 gas_price = 0
