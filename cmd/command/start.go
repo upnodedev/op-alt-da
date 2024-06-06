@@ -29,8 +29,11 @@ func StartCmd() *cobra.Command {
 			var store da.KVStore
 			switch cfgApp.DA {
 			case da.DaFile:
-				cfgFileStore := da.DefaultFileStoreCfg()
-				store = da.NewFileStore(cfgFileStore.Directory)
+				cfgFileStore := da.NewFileStoreCfg()
+				store, err = da.NewFileStore(cfgFileStore.Directory)
+				if err != nil {
+					return err
+				}
 			case da.DaCelestia:
 				cfgCelestia := da.NewCelestiaCfg()
 				store, err = da.NewCelestiaStore(cfgCelestia)

@@ -37,10 +37,15 @@ type FileStore struct {
 	directory string
 }
 
-func NewFileStore(directory string) *FileStore {
+func NewFileStore(directory string) (*FileStore, error) {
+	if _, err := os.Stat(directory); os.IsNotExist(err) {
+		if err := os.MkdirAll(directory, 0755); err != nil {
+			return nil, err
+		}
+	}
 	return &FileStore{
 		directory: directory,
-	}
+	}, nil
 }
 
 func (s *FileStore) Get(_ context.Context, key []byte) ([]byte, error) {
