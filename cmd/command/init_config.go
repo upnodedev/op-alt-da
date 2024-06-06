@@ -8,7 +8,7 @@ import (
 	"text/template"
 )
 
-const DefaultHomeDir = ".plasma-hub"
+const DefaultHomeDir = ".plasma-da"
 
 const ConfigTemplate = `[server]
 http_host = "localhost"
@@ -24,7 +24,7 @@ gas_price = 0
 eth_fallback_disabled = false
 
 [filestore]
-path = ".plasma-hub/data/filestore"
+path = ".plasma-da/data/filestore"
 `
 
 func InitConfigCmd() *cobra.Command {
@@ -58,7 +58,7 @@ func InitConfigCmd() *cobra.Command {
 	}
 
 	// set the flags
-	initCmd.Flags().String("home", "", "config file of the plasma-hub (default is $HOME/.plasma-hub)")
+	initCmd.Flags().String("home", "", "config file of the plasma-da (default is $HOME/.plasma-da)")
 	initCmd.Flags().String("network", "local", "network type")
 	initCmd.Flags().String("da", "file", "data availability layer type")
 
@@ -118,7 +118,7 @@ func createConfig(homeDir, network, da string) error {
 			}
 		}
 
-		fmt.Println(`Config plasma-hub is already initialized. Please check the config file at: `, configFile)
+		fmt.Println(`Config plasma-da is already initialized. Please check the config file at: `, configFile)
 	}
 	return nil
 }

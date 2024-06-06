@@ -9,9 +9,9 @@ import (
 func VersionCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "version",
-		Short: "Print the version number of plasma-hub",
+		Short: "Print the version number of plasma-da",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("💈 Plasma Hub version", version.BuildVersion)
+			fmt.Println("💈 Plasma DA version", version.BuildVersion)
 			fmt.Println("💈 Build time:", version.BuildTime)
 			fmt.Println("💈 Git commit:", version.BuildCommit)
 		},

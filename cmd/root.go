@@ -6,7 +6,7 @@ import (
 )
 
 var rootCommand = &cobra.Command{
-	Use:   "plasma-hub",
+	Use:   "plasma-da",
 	Short: "Plasma Hub is a simple CLI tool.",
 	Long:  `Plasma Hub is a simple CLI tool to roll up data to multiple services.`,
 }

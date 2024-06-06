@@ -22,7 +22,7 @@ func StartCmd() *cobra.Command {
 			}
 			homeDir := cmd.Flag("home").Value.String()
 			if homeDir == "" {
-				homeDir = userDir + "/.plasma-hub"
+				homeDir = userDir + "/.plasma-da"
 			}
 			cfgApp := config.NewAppConfig(homeDir)
 
@@ -48,7 +48,7 @@ func StartCmd() *cobra.Command {
 			return nil
 		},
 	}
-	startCmd.Flags().String("home", "", "config file (default is $HOME/.plasma-hub)")
+	startCmd.Flags().String("home", "", "config file (default is $HOME/.plasma-da)")
 
 	return startCmd
 }
