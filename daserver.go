@@ -1,7 +1,6 @@
 package plasma
 
 import (
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -29,6 +28,7 @@ func NewDAServer(cfgApp config.App, store da.KVStore, logger *slog.Logger) *DASe
 
 	http.HandleFunc("/get/", s.HandleGet)
 	http.HandleFunc("/put/", s.HandlePut)
+	http.HandleFunc("/put", s.HandlePut)
 
 	return s
 }
@@ -78,14 +78,7 @@ func (d *DAServer) HandleGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (d *DAServer) HandlePut(w http.ResponseWriter, r *http.Request) {
-	d.logger.Info("handling put request", "url", r.URL.Path)
-
-	route := path.Dir(r.URL.Path)
-	d.logger.Info("route", "route", route)
-	if route != "/put" {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	d.logger.Info("handling put request", "url", r.URL)
 
 	input, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -102,9 +95,9 @@ func (d *DAServer) HandlePut(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		d.logger.Info("stored commitment", "key", hex.EncodeToString(comm), "input_len", len(input))
+		d.logger.Info("stored commitment", "key", hexutil.Encode(comm), "input_len", len(input))
 
-		if _, err := w.Write(comm); err != nil {
+		if _, err := w.Write([]byte(hexutil.Encode(comm))); err != nil {
 			d.logger.Error("Failed to write commitment request body", "err", err, "comm", comm)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -125,4 +118,16 @@ func (d *DAServer) HandlePut(w http.ResponseWriter, r *http.Request) {
 		}
 		w.WriteHeader(http.StatusOK)
 	}
+}
+
+func (d *DAServer) HandlePut1(w http.ResponseWriter, r *http.Request) {
+	d.logger.Info("handling put request", "url", r.URL.Path)
+
+	input, err := io.ReadAll(r.Body)
+	if err != nil {
+		d.logger.Error("Failed to read request body", "err", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	d.logger.Info("storing commitment", "input", string(input))
 }
