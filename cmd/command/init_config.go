@@ -2,10 +2,10 @@ package command
 
 import (
 	"fmt"
+	"github.com/spf13/cobra"
 	"os"
 	"strings"
-
-	"github.com/spf13/cobra"
+	"text/template"
 )
 
 const DefaultHomeDir = ".plasma-hub"
@@ -13,7 +13,7 @@ const DefaultHomeDir = ".plasma-hub"
 const ConfigTemplate = `[server]
 http_host = "localhost"
 http_port = 3128
-da = "file"
+da = "{{.Da}}"
 
 [celestia]
 rpc_port = "http://localhost:7980"
@@ -24,7 +24,8 @@ gas_price = 0
 eth_fallback_disabled = false
 
 [filestore]
-path = ".plasma-hub/data/filestore"`
+path = ".plasma-hub/data/filestore"
+`
 
 func InitConfigCmd() *cobra.Command {
 	initCmd := &cobra.Command{
@@ -40,6 +41,11 @@ func InitConfigCmd() *cobra.Command {
 			}
 			if homeDir == "" {
 				homeDir = userDir + "/" + DefaultHomeDir
+			}
+
+			// validate da supported. Only file and celestia are supported
+			if da != "file" && da != "celestia" {
+				return fmt.Errorf("da %s is not supported", da)
 			}
 
 			// create the config file
@@ -67,20 +73,28 @@ func createConfig(homeDir, network, da string) error {
 		}
 	}
 
+	data := struct {
+		Da string
+	}{
+		Da: da,
+	}
+	t := template.Must(template.New("config").Parse(ConfigTemplate))
+
 	// generate file config from template
 	configFile := configPath + "/config.toml"
 	fmt.Println("Creating config file at", configFile)
 	if _, err := os.Stat(configFile); os.IsNotExist(err) {
-		f, err := os.Create(configFile)
+		outputFile, err := os.Create(configFile)
+		if err != nil {
+			return err
+		}
+		defer outputFile.Close()
+
+		err = t.Execute(outputFile, data)
 		if err != nil {
 			return err
 		}
 
-		_, err = f.WriteString(ConfigTemplate)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
 	} else {
 		var input string
 		fmt.Println("Config file already exists. Do you want to overwrite it? (y/n)")
@@ -92,16 +106,16 @@ func createConfig(homeDir, network, da string) error {
 		input = strings.ToLower(input)
 		if input == "yes" || input == "y" {
 			fmt.Println("Overwriting config file....")
-			f, err := os.Create(configFile)
+			outputFile, err := os.Create(configFile)
 			if err != nil {
 				return err
 			}
+			defer outputFile.Close()
 
-			_, err = f.WriteString(ConfigTemplate)
+			err = t.Execute(outputFile, data)
 			if err != nil {
 				return err
 			}
-			defer f.Close()
 		}
 
 		fmt.Println(`Config plasma-hub is already initialized. Please check the config file at: `, configFile)

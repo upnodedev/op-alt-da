@@ -119,15 +119,3 @@ func (d *DAServer) HandlePut(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}
 }
-
-func (d *DAServer) HandlePut1(w http.ResponseWriter, r *http.Request) {
-	d.logger.Info("handling put request", "url", r.URL.Path)
-
-	input, err := io.ReadAll(r.Body)
-	if err != nil {
-		d.logger.Error("Failed to read request body", "err", err)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	d.logger.Info("storing commitment", "input", string(input))
-}
