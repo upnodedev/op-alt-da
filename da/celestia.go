@@ -9,6 +9,7 @@ import (
 	"github.com/rollkit/go-da/proxy"
 	"github.com/spf13/viper"
 	"os"
+	"path"
 	"time"
 )
 
@@ -30,7 +31,7 @@ const (
 )
 
 const (
-	DefaultDataMapPath = "plasma-da/data/celestia"
+	DefaultDataMapPath = "data/celestia"
 	DaCelestia         = "celestia"
 )
 
@@ -95,7 +96,7 @@ type CelestiaStore struct {
 }
 
 // NewCelestiaStore creates a new CelestiaStore.
-func NewCelestiaStore(cfg CelestiaCfg) (*CelestiaStore, error) {
+func NewCelestiaStore(cfg CelestiaCfg, homeDir string) (*CelestiaStore, error) {
 	client, err := proxy.NewClient(cfg.Rpc, cfg.AuthToken)
 	if err != nil {
 		return nil, err
@@ -105,8 +106,11 @@ func NewCelestiaStore(cfg CelestiaCfg) (*CelestiaStore, error) {
 	if err != nil {
 		return nil, err
 	}
-	if _, err := os.Stat(DefaultDataMapPath); os.IsNotExist(err) {
-		if err := os.MkdirAll(DefaultDataMapPath, 0755); err != nil {
+
+	mapPath := path.Join(homeDir, DefaultDataMapPath)
+
+	if _, err := os.Stat(mapPath); os.IsNotExist(err) {
+		if err := os.MkdirAll(mapPath, 0755); err != nil {
 			return nil, err
 		}
 	}
@@ -116,7 +120,7 @@ func NewCelestiaStore(cfg CelestiaCfg) (*CelestiaStore, error) {
 		GetTimeout: time.Minute,
 		Namespace:  ns,
 		cfg:        cfg,
-		fileStore:  FileStore{directory: DefaultDataMapPath},
+		fileStore:  FileStore{directory: mapPath},
 	}, nil
 }
 

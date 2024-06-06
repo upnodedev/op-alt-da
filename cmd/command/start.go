@@ -36,7 +36,7 @@ func StartCmd() *cobra.Command {
 				}
 			case da.DaCelestia:
 				cfgCelestia := da.NewCelestiaCfg()
-				store, err = da.NewCelestiaStore(cfgCelestia)
+				store, err = da.NewCelestiaStore(cfgCelestia, homeDir)
 				if err != nil {
 					return err
 				}

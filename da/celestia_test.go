@@ -7,14 +7,14 @@ import (
 )
 
 func TestNewCelestiaStore(t *testing.T) {
-	store, err := NewCelestiaStore(DefaultCelestiaConfig())
+	store, err := NewCelestiaStore(DefaultCelestiaConfig(), "plasma-da/data")
 	assert.NoError(t, err)
 	assert.NotEqual(t, store, nil)
 }
 
 func TestCelestiaStore_Put(t *testing.T) {
 	ctx := context.Background()
-	store, err := NewCelestiaStore(DefaultCelestiaConfig())
+	store, err := NewCelestiaStore(DefaultCelestiaConfig(), "plasma-da/data")
 	assert.NoError(t, err)
 
 	err = store.Put(ctx, []byte("key"), []byte("value"))
