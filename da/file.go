@@ -3,6 +3,7 @@ package da
 import (
 	"context"
 	"encoding/hex"
+	"github.com/spf13/cobra"
 	"os"
 	"path"
 	"plasma/common"
@@ -18,8 +19,9 @@ type FileStoreCfg struct {
 }
 
 func DefaultFileStoreCfg() FileStoreCfg {
+	homedir, _ := os.UserHomeDir()
 	return FileStoreCfg{
-		Directory: "plasm-hub/data",
+		Directory: path.Join(homedir, ".plasma-da/data/filestore"),
 	}
 }
 
@@ -31,6 +33,16 @@ func NewFileStoreCfg() FileStoreCfg {
 	}
 
 	return cfg
+}
+
+func AddFileStoreFlags(cmd *cobra.Command) {
+	cmd.Flags().String(DaPath, DefaultFileStoreCfg().Directory, "filestore path")
+}
+
+func ParseFileStoreFlag(cmd *cobra.Command) FileStoreCfg {
+	return FileStoreCfg{
+		Directory: cmd.Flag(DaPath).Value.String(),
+	}
 }
 
 type FileStore struct {

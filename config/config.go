@@ -15,9 +15,10 @@ const (
 )
 
 type App struct {
-	Host string `json:"host"`
-	Port int    `json:"port"`
-	DA   string `json:"da"`
+	Host    string `json:"host"`
+	Port    int    `json:"port"`
+	DA      string `json:"da"`
+	HomeDir string `json:"home_dir"`
 }
 
 func DefaultConfig() App {

@@ -13,9 +13,9 @@ ifeq (,$(VERSION))
 endif
 
 
-ldflags = -X plasma-da/version.BuildVersion=$(VERSION) \
-		  -X plasma-da/version.BuildCommit=$(COMMIT) \
-		  -X plasma-da/version.BuildTime=$(TIME)
+ldflags = -X plasma/version.BuildVersion=$(VERSION) \
+		  -X plasma/version.BuildCommit=$(COMMIT) \
+		  -X plasma/version.BuildTime=$(TIME)
 
 BUILD_FLAGS := -ldflags '$(ldflags)'
 # ---------------------------------------------------------------------------- #
@@ -23,8 +23,8 @@ BUILD_FLAGS := -ldflags '$(ldflags)'
 # ---------------------------------------------------------------------------- #
 .PHONY: install
 install: go.sum ## Installs the plasma-da binary
-	go mod tidy
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/plasma-da
+	@go mod tidy
+	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/plasma-da
 
 
 .PHONY: build

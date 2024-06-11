@@ -20,22 +20,22 @@ func StartCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			homeDir := cmd.Flag("home").Value.String()
+			cfgApp := ParseAppFlags(cmd)
+			homeDir := cfgApp.HomeDir
 			if homeDir == "" {
 				homeDir = userDir + "/.plasma-da"
 			}
-			cfgApp := config.NewAppConfig(homeDir)
 
 			var store da.KVStore
 			switch cfgApp.DA {
 			case da.DaFile:
-				cfgFileStore := da.NewFileStoreCfg()
+				cfgFileStore := da.ParseFileStoreFlag(cmd)
 				store, err = da.NewFileStore(cfgFileStore.Directory)
 				if err != nil {
 					return err
 				}
 			case da.DaCelestia:
-				cfgCelestia := da.NewCelestiaCfg()
+				cfgCelestia := da.ParseCelestiaConfig(cmd)
 				store, err = da.NewCelestiaStore(cfgCelestia, homeDir)
 				if err != nil {
 					return err
@@ -48,7 +48,33 @@ func StartCmd() *cobra.Command {
 			return nil
 		},
 	}
-	startCmd.Flags().String("home", "", "config file (default is $HOME/.plasma-da)")
+	AppFlags(startCmd)
+	da.AddCelestiaFlags(startCmd)
+	da.AddFileStoreFlags(startCmd)
 
 	return startCmd
+}
+
+func AppFlags(cmd *cobra.Command) {
+	cmd.Flags().String("host", "localhost", "host (default is localhost)")
+	cmd.Flags().Int("port", 3128, "port (default is 3128)")
+	cmd.Flags().String("home", "", "config file (default is $HOME/.plasma-da)")
+	cmd.Flags().String("da", "file", "data availability layer type (default is file store)")
+}
+
+func ParseAppFlags(cmd *cobra.Command) config.App {
+	cfgApp := config.DefaultConfig()
+	if host := cmd.Flag("host").Value.String(); host != "" {
+		cfgApp.Host = host
+	}
+	if port, err := cmd.Flags().GetInt("port"); err == nil {
+		cfgApp.Port = port
+	}
+	if homeDir := cmd.Flag("home").Value.String(); homeDir != "" {
+		cfgApp.HomeDir = homeDir
+	}
+	if daLayer := cmd.Flag("da").Value.String(); daLayer != "" {
+		cfgApp.DA = daLayer
+	}
+	return cfgApp
 }

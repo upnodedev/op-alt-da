@@ -7,6 +7,7 @@ import (
 	"errors"
 	"github.com/rollkit/go-da"
 	"github.com/rollkit/go-da/proxy"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
 	"path"
@@ -22,7 +23,7 @@ var ErrFailedToSubmit = errors.New("failed to submit blob")
 var ErrBlobNotFound = errors.New("blob: not found")
 
 const (
-	Rpc                 = "celestia.rpc_port"
+	Rpc                 = "celestia.rpc"
 	AuthToken           = "celestia.auth_token"
 	Namespace           = "celestia.namespace"
 	EthFallbackDisabled = "celestia.eth_fallback_disabled"
@@ -51,8 +52,38 @@ func DefaultCelestiaConfig() CelestiaCfg {
 		Namespace:           "",
 		EthFallbackDisabled: false,
 		MaxBlobSize:         2000,
-		GasPrice:            0,
+		GasPrice:            0.002,
 	}
+}
+
+func AddCelestiaFlags(cmd *cobra.Command) {
+	cmd.Flags().String(Rpc, DefaultCelestiaConfig().Rpc, "Celestia RPC port")
+	cmd.Flags().String(AuthToken, DefaultCelestiaConfig().AuthToken, "Celestia auth token")
+	cmd.Flags().String(Namespace, DefaultCelestiaConfig().Namespace, "Celestia namespace")
+	cmd.Flags().Bool(EthFallbackDisabled, DefaultCelestiaConfig().EthFallbackDisabled, "Disable Ethereum fallback")
+	cmd.Flags().Uint64(MaxBlobSize, DefaultCelestiaConfig().MaxBlobSize, "Max blob size")
+	cmd.Flags().Float64(GasPrice, DefaultCelestiaConfig().GasPrice, "Gas price")
+}
+
+func ParseCelestiaConfig(cmd *cobra.Command) CelestiaCfg {
+	cfg := DefaultCelestiaConfig()
+	if rpc := cmd.Flag(Rpc).Value.String(); rpc != "" {
+		cfg.Rpc = rpc
+	}
+	if authToken := cmd.Flag(AuthToken).Value.String(); authToken != "" {
+		cfg.AuthToken = authToken
+	}
+	if namespace := cmd.Flag(Namespace).Value.String(); namespace != "" {
+		cfg.Namespace = namespace
+	}
+	if ethFallbackDisabled, err := cmd.Flags().GetBool(EthFallbackDisabled); err == nil {
+		cfg.EthFallbackDisabled = ethFallbackDisabled
+	}
+	if maxBlobSize, err := cmd.Flags().GetUint64(MaxBlobSize); err == nil {
+		cfg.MaxBlobSize = maxBlobSize
+	}
+
+	return cfg
 }
 
 func NewCelestiaCfg() CelestiaCfg {

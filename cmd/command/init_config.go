@@ -20,7 +20,7 @@ rpc_port = "http://localhost:7980"
 auth_token = ""
 namespace = ""
 max_block_size = 2000
-gas_price = 0
+gas_price = 0.002
 eth_fallback_disabled = false
 
 [filestore]
