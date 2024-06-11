@@ -1,8 +1,7 @@
-package main
+package command
 
 import (
 	"github.com/spf13/cobra"
-	"plasma/cmd/command"
 )
 
 var rootCommand = &cobra.Command{
@@ -21,7 +20,7 @@ func Execute() error {
 }
 
 func init() {
-	rootCommand.AddCommand(command.VersionCmd())
-	rootCommand.AddCommand(command.StartCmd())
-	rootCommand.AddCommand(command.InitConfigCmd())
+	rootCommand.AddCommand(VersionCmd())
+	rootCommand.AddCommand(StartCmd())
+	rootCommand.AddCommand(InitConfigCmd())
 }
