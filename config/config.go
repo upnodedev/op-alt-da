@@ -1,17 +1,16 @@
 package config
 
 import (
-	"fmt"
 	"github.com/spf13/viper"
-	"path/filepath"
+	"os"
 )
 
-var DefaultConfigPath = "config"
-
+// env constants
 const (
-	HttpHost = "server.http_host"
-	HttpPort = "server.http_port"
-	DA       = "server.da"
+	PlasmaDaHttpHost = "HTTP_HOST"
+	PlasmaDaHttpPort = "HTTP_PORT"
+	PlasmaDaType     = "DA_TYPE"
+	PlasmaDaHomeDir  = "HOME_DIR"
 )
 
 type App struct {
@@ -22,40 +21,33 @@ type App struct {
 }
 
 func DefaultConfig() App {
-	return App{
-		Host: "localhost",
-		Port: 8087,
-		DA:   "file",
+	// default app config will read from the environment variables
+	// if set by flag, it will override the default values
+	homeDir, _ := os.UserHomeDir()
+	cfg := App{
+		Host:    "localhost",
+		Port:    8087,
+		DA:      "file",
+		HomeDir: homeDir,
 	}
-}
 
-func NewAppConfig(homeDir string) App {
-	loadConfig(homeDir)
-	cfg := DefaultConfig()
-
-	if host := viper.GetString(HttpHost); host != "" {
+	if homeDir := viper.GetString(PlasmaDaHomeDir); homeDir != "" {
+		cfg.HomeDir = homeDir
+	}
+	if host := viper.GetString(PlasmaDaHttpHost); host != "" {
 		cfg.Host = host
 	}
-	if port := viper.GetInt(HttpPort); port > 0 {
+	if port := viper.GetInt(PlasmaDaHttpPort); port > 0 {
 		cfg.Port = port
 	}
-	if da := viper.GetString(DA); da != "" {
+	if da := viper.GetString(PlasmaDaType); da != "" {
 		cfg.DA = da
 	}
 
 	return cfg
 }
 
-func loadConfig(homeDir string) {
-	viper.SetConfigName("config")
-	viper.AddConfigPath("./")
-	viper.AddConfigPath(filepath.Join(homeDir, DefaultConfigPath))
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		panic(fmt.Errorf("failed to load config: %s", err))
-	}
-
-	viper.WatchConfig()
-	viper.SetEnvPrefix("CS")
-}
+//func init() {
+//	viper.AutomaticEnv()
+//	viper.SetEnvPrefix(PrefixEnv)
+//}

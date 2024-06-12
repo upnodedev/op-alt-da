@@ -6,8 +6,8 @@ import (
 
 var rootCommand = &cobra.Command{
 	Use:   "plasma-da",
-	Short: "Plasma Hub is a simple CLI tool.",
-	Long:  `Plasma Hub is a simple CLI tool to roll up data to multiple services.`,
+	Short: "Plasma DA is a simple CLI tool.",
+	Long:  `Plasma DA is a simple CLI tool to roll up data to multiple services.`,
 }
 
 func Execute() error {
