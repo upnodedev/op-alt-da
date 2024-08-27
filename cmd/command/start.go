@@ -11,6 +11,7 @@ import (
 	"plasma/da"
 	"plasma/da/celestia"
 	"plasma/da/file"
+	"plasma/da/ipfs"
 )
 
 func StartCmd() *cobra.Command {
@@ -42,6 +43,12 @@ func StartCmd() *cobra.Command {
 				if err != nil {
 					return err
 				}
+			case ipfs.DaIpfs:
+				cfgIpfs := ipfs.ParseConfig(cmd)
+				store, err = ipfs.NewIpfsStore(cfgIpfs, homeDir)
+				if err != nil {
+					return err
+				}
 			default:
 				return errors.New(fmt.Sprintf("unknown DA type: %s", cfgApp.DA))
 			}
@@ -53,6 +60,7 @@ func StartCmd() *cobra.Command {
 	AppFlags(startCmd)
 	celestia.AddFlags(startCmd)
 	file.AddFlags(startCmd)
+	ipfs.AddFlags(startCmd)
 
 	return startCmd
 }

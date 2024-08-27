@@ -6,24 +6,21 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	shell "github.com/ipfs/go-ipfs-api"
-	coreiface "github.com/ipfs/kubo/core/coreiface"
 	"os"
 	"path"
 	"plasma/common"
 )
 
-const DefaultIpfsMapPath = ".plasma-da/data/ipfs"
-
-//type MappingCID struct {
-//	Path string `json:"path"`
-//}
+const (
+	DefaultIpfsMapPath = ".plasma-da/data/ipfs"
+	DaIpfs             = "ipfs"
+)
 
 type MappingCID struct {
 	Path string `json:"path"`
 }
 
 type Store struct {
-	API  coreiface.CoreAPI
 	Shel *shell.Shell
 
 	// temporary file mapping
@@ -31,11 +28,7 @@ type Store struct {
 }
 
 func NewIpfsStore(cfg Config, homeDir string) (*Store, error) {
-	sh := shell.NewShell("localhost:5001")
-	//api, err := rpc.NewPathApi(cfg.Url)
-	//if err != nil {
-	//	return nil, err
-	//}
+	sh := shell.NewShell(cfg.Url)
 
 	mapPath := path.Join(homeDir, DefaultIpfsMapPath)
 	if _, err := os.Stat(mapPath); os.IsNotExist(err) {
@@ -50,7 +43,7 @@ func NewIpfsStore(cfg Config, homeDir string) (*Store, error) {
 	}, nil
 }
 
-func (s *Store) Get(ctx context.Context, key []byte) ([]byte, error) {
+func (s *Store) Get(_ context.Context, key []byte) ([]byte, error) {
 	// get path from data map
 	dataRead, err := s.readFile(key)
 	if err != nil {
@@ -61,15 +54,6 @@ func (s *Store) Get(ctx context.Context, key []byte) ([]byte, error) {
 	if err := json.Unmarshal(dataRead, &dataMap); err != nil {
 		return nil, err
 	}
-	//pathCommitment, err := ipfspath.NewPath(dataMap.Path)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//data, err := s.API.Block().Get(ctx, pathCommitment)
-	//if err != nil {
-	//	return nil, err
-	//}
 
 	data, err := s.Shel.Cat(dataMap.Path)
 	if err != nil {
@@ -84,7 +68,7 @@ func (s *Store) Get(ctx context.Context, key []byte) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (s *Store) Put(ctx context.Context, key []byte, value []byte) error {
+func (s *Store) Put(_ context.Context, key []byte, value []byte) error {
 	cid, err := s.Shel.Add(bytes.NewReader(value))
 	if err != nil {
 		return err
@@ -94,17 +78,6 @@ func (s *Store) Put(ctx context.Context, key []byte, value []byte) error {
 	dataMap := MappingCID{
 		Path: cid,
 	}
-
-	//blockStat, err := s.API.Block().Put(ctx, bytes.NewReader(value))
-	//if err != nil {
-	//	return err
-	//}
-	//println(blockStat.Path().String())
-	//println(blockStat.Path().RootCid().String())
-	//
-	//dataMap := MappingCID{
-	//	Path: blockStat.Path().String(),
-	//}
 
 	// save path to data map
 	dataWrite, err := json.Marshal(dataMap)
