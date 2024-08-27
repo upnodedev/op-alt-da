@@ -115,11 +115,8 @@ func (c *Store) Put(ctx context.Context, key []byte, value []byte) error {
 	if err != nil {
 		return err
 	}
-	if err := c.writeFile(key, dataWrite); err != nil {
-		return err
-	}
 
-	return nil
+	return c.writeFile(key, dataWrite)
 }
 
 func (c *Store) readFile(key []byte) ([]byte, error) {
