@@ -6,37 +6,31 @@ PlasmaDA, a configurable system that configure with a protocol ID and an adapter
 make install
 ```
 
-## How to use
-### Step 1: Create config file. The config file use tomal format.
+## Features
+- [x] Configurable of plasma-da able to set from environment variable or flags.
+- [x] Support Celestia data availability solution.
+- [x] Support FileStore to store the data.
+- [x] Support IPFS to store the data.
+- [x] Support ArWeave to store the data.
+
+## Plasma-DA able to run with the following data availability solution.
+
+### Run the Plasma-DA use Celestia as data availability solution. 
+```shell 
+plasma-da start --da=celestia  --celestia.auth_token=<api_token> --celestia.namespace=<namespace> --celestia.rpc=<rpc_url>
+```
+
+### Run the Plasma-DA use FileStore as data availability solution. 
 ```shell
-plasma-da init --da <data availability>
+plasma-da start --da=filestore --filestore.path=<path to store data>
 ```
-Example:
+
+### Run the Plasma-DA use IPFS as data availability solution. 
 ```shell
-plasma-da init --da celestia
+plasma-da start --da=ipfs --ipfs.url=<ipfs node url>
 ```
-If you want to change the config file, you can edit config.toml file in the $HOME/.plasma-da/config/config.toml for default.
-The config file will look like this:
-```toml
-[server]
-http_host = "localhost"
-http_port = 3128
-da = "celestia"
 
-[celestia]
-rpc_port = "http://localhost:7980"
-auth_token = ""
-namespace = ""
-max_block_size = 2000
-gas_price = 0
-eth_fallback_disabled = false
-
-[filestore]
-path = ".plasma-da/data/filestore"
-```
-### Step 2: Start the Plasma-DA
+### Run the Plasma-DA use ArWeave as data availability solution. 
 ```shell
-plasma-da start
+ plasma-da start --da=ar --ar.client_url=http://localhost:8080 --ar.wallet_path=<path to wallet json file>
 ```
-
-
