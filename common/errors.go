@@ -13,3 +13,9 @@ var ErrInvalidCommitment = errors.New("invalid commitment")
 
 // ErrCommitmentMismatch is returned when the commitment does not match the given input.
 var ErrCommitmentMismatch = errors.New("commitment mismatch")
+
+// ErrInsufficientBalance is returned when the wallet does not have enough balance to post the transaction.
+var ErrInsufficientBalance = errors.New("insufficient balance")
+
+// ErrWalletNotFound is returned when the wallet is not found.
+var ErrWalletNotFound = errors.New("wallet not found")

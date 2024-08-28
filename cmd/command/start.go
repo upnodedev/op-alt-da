@@ -9,6 +9,7 @@ import (
 	"plasma"
 	"plasma/config"
 	"plasma/da"
+	"plasma/da/arweave"
 	"plasma/da/celestia"
 	"plasma/da/file"
 	"plasma/da/ipfs"
@@ -49,6 +50,12 @@ func StartCmd() *cobra.Command {
 				if err != nil {
 					return err
 				}
+			case arweave.DaAr:
+				cfgAr := arweave.ParseConfig(cmd)
+				store, err = arweave.NewArStore(cfgAr, homeDir)
+				if err != nil {
+					return err
+				}
 			default:
 				return errors.New(fmt.Sprintf("unknown DA type: %s", cfgApp.DA))
 			}
@@ -61,6 +68,7 @@ func StartCmd() *cobra.Command {
 	celestia.AddFlags(startCmd)
 	file.AddFlags(startCmd)
 	ipfs.AddFlags(startCmd)
+	arweave.AddFlags(startCmd)
 
 	return startCmd
 }

@@ -55,7 +55,7 @@ func TestCommitmentData(t *testing.T) {
 				// Test that reencoding the commitment returns the same data
 				require.Equal(t, tc.commData, comm.Encode())
 				// Test that TxData() returns the same data as the original, prepended with a version byte
-				require.Equal(t, append([]byte{TxDataVersion1}, tc.commData...), comm.TxData())
+				require.Equal(t, append([]byte{common.TxDataVersion1}, tc.commData...), comm.TxData())
 
 				// Test that Verify() returns no error for the correct data
 				require.NoError(t, comm.Verify(tc.commData))
