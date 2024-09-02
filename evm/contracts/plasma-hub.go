@@ -52,7 +52,7 @@ type PlasmaDaTranslationHubDelegatedSubmitInput struct {
 
 // ContractsMetaData contains all meta data concerning the Contracts contract.
 var ContractsMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"DuplicatedSubmission\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidShortString\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidSignature\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"str\",\"type\":\"string\"}],\"name\":\"StringTooLong\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"EIP712DomainChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newSubmitter\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"oldSubmitter\",\"type\":\"address\"}],\"name\":\"Extend\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"submitter\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"}],\"name\":\"TranslationSubmitted\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"submitter\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"}],\"internalType\":\"structPlasmaDaTranslationHub.DelegatedSubmitInput[]\",\"name\":\"submissions\",\"type\":\"tuple[]\"}],\"name\":\"batchDelegatedSubmit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"}],\"internalType\":\"structPlasmaDaTranslationHub.BatchSubmitInput[]\",\"name\":\"submissions\",\"type\":\"tuple[]\"}],\"name\":\"batchSubmit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"submitter\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"}],\"internalType\":\"structPlasmaDaTranslationHub.DelegatedSubmitInput\",\"name\":\"submission\",\"type\":\"tuple\"}],\"name\":\"delegatedSubmit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"eip712Domain\",\"outputs\":[{\"internalType\":\"bytes1\",\"name\":\"fields\",\"type\":\"bytes1\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"version\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"verifyingContract\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"salt\",\"type\":\"bytes32\"},{\"internalType\":\"uint256[]\",\"name\":\"extensions\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"old\",\"type\":\"address\"}],\"name\":\"extend\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"submitter\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"}],\"name\":\"get\",\"outputs\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"}],\"internalType\":\"structPlasmaDaTranslationHub.DaCid[]\",\"name\":\"result\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"submitter\",\"type\":\"address\"}],\"name\":\"getExtendedAddresses\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"}],\"name\":\"submit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"translation\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"submitter\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"}],\"internalType\":\"structPlasmaDaTranslationHub.DelegatedSubmitInput\",\"name\":\"submission\",\"type\":\"tuple\"}],\"name\":\"verifySignature\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"DuplicatedSubmission\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidShortString\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidSignature\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"str\",\"type\":\"string\"}],\"name\":\"StringTooLong\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"EIP712DomainChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newSubmitter\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"oldSubmitter\",\"type\":\"address\"}],\"name\":\"Extend\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"submitter\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"}],\"name\":\"TranslationSubmitted\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"submitter\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"}],\"internalType\":\"structPlasmaDaTranslationHub.DelegatedSubmitInput[]\",\"name\":\"submissions\",\"type\":\"tuple[]\"}],\"name\":\"batchDelegatedSubmit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"}],\"internalType\":\"structPlasmaDaTranslationHub.BatchSubmitInput[]\",\"name\":\"submissions\",\"type\":\"tuple[]\"}],\"name\":\"batchSubmit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"submitter\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"}],\"internalType\":\"structPlasmaDaTranslationHub.DelegatedSubmitInput\",\"name\":\"submission\",\"type\":\"tuple\"}],\"name\":\"delegatedSubmit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"eip712Domain\",\"outputs\":[{\"internalType\":\"bytes1\",\"name\":\"fields\",\"type\":\"bytes1\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"version\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"chainId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"verifyingContract\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"salt\",\"type\":\"bytes32\"},{\"internalType\":\"uint256[]\",\"name\":\"extensions\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"old\",\"type\":\"address\"}],\"name\":\"extend\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"submitter\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"}],\"name\":\"get\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"submitter\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"}],\"name\":\"getAll\",\"outputs\":[{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"}],\"internalType\":\"structPlasmaDaTranslationHub.DaCid[]\",\"name\":\"result\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"submitter\",\"type\":\"address\"}],\"name\":\"getExtendedAddresses\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"}],\"name\":\"submit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"submitter\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"bytes32\",\"name\":\"dataHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"da\",\"type\":\"bytes32\"},{\"internalType\":\"bytes\",\"name\":\"cid\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"}],\"internalType\":\"structPlasmaDaTranslationHub.DelegatedSubmitInput\",\"name\":\"submission\",\"type\":\"tuple\"}],\"name\":\"verifySignature\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
 }
 
 // ContractsABI is the input ABI used to generate the binding from.
@@ -271,12 +271,43 @@ func (_Contracts *ContractsCallerSession) Eip712Domain() (struct {
 	return _Contracts.Contract.Eip712Domain(&_Contracts.CallOpts)
 }
 
-// Get is a free data retrieval call binding the contract method 0x7b82d74e.
+// Get is a free data retrieval call binding the contract method 0x9b0359d8.
 //
-// Solidity: function get(address submitter, bytes32 dataHash) view returns((bytes32,bytes)[] result)
-func (_Contracts *ContractsCaller) Get(opts *bind.CallOpts, submitter common.Address, dataHash [32]byte) ([]PlasmaDaTranslationHubDaCid, error) {
+// Solidity: function get(address submitter, bytes32 dataHash, bytes32 da) view returns(bytes cid)
+func (_Contracts *ContractsCaller) Get(opts *bind.CallOpts, submitter common.Address, dataHash [32]byte, da [32]byte) ([]byte, error) {
 	var out []interface{}
-	err := _Contracts.contract.Call(opts, &out, "get", submitter, dataHash)
+	err := _Contracts.contract.Call(opts, &out, "get", submitter, dataHash, da)
+
+	if err != nil {
+		return *new([]byte), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([]byte)).(*[]byte)
+
+	return out0, err
+
+}
+
+// Get is a free data retrieval call binding the contract method 0x9b0359d8.
+//
+// Solidity: function get(address submitter, bytes32 dataHash, bytes32 da) view returns(bytes cid)
+func (_Contracts *ContractsSession) Get(submitter common.Address, dataHash [32]byte, da [32]byte) ([]byte, error) {
+	return _Contracts.Contract.Get(&_Contracts.CallOpts, submitter, dataHash, da)
+}
+
+// Get is a free data retrieval call binding the contract method 0x9b0359d8.
+//
+// Solidity: function get(address submitter, bytes32 dataHash, bytes32 da) view returns(bytes cid)
+func (_Contracts *ContractsCallerSession) Get(submitter common.Address, dataHash [32]byte, da [32]byte) ([]byte, error) {
+	return _Contracts.Contract.Get(&_Contracts.CallOpts, submitter, dataHash, da)
+}
+
+// GetAll is a free data retrieval call binding the contract method 0x6e920d92.
+//
+// Solidity: function getAll(address submitter, bytes32 dataHash) view returns((bytes32,bytes)[] result)
+func (_Contracts *ContractsCaller) GetAll(opts *bind.CallOpts, submitter common.Address, dataHash [32]byte) ([]PlasmaDaTranslationHubDaCid, error) {
+	var out []interface{}
+	err := _Contracts.contract.Call(opts, &out, "getAll", submitter, dataHash)
 
 	if err != nil {
 		return *new([]PlasmaDaTranslationHubDaCid), err
@@ -288,18 +319,18 @@ func (_Contracts *ContractsCaller) Get(opts *bind.CallOpts, submitter common.Add
 
 }
 
-// Get is a free data retrieval call binding the contract method 0x7b82d74e.
+// GetAll is a free data retrieval call binding the contract method 0x6e920d92.
 //
-// Solidity: function get(address submitter, bytes32 dataHash) view returns((bytes32,bytes)[] result)
-func (_Contracts *ContractsSession) Get(submitter common.Address, dataHash [32]byte) ([]PlasmaDaTranslationHubDaCid, error) {
-	return _Contracts.Contract.Get(&_Contracts.CallOpts, submitter, dataHash)
+// Solidity: function getAll(address submitter, bytes32 dataHash) view returns((bytes32,bytes)[] result)
+func (_Contracts *ContractsSession) GetAll(submitter common.Address, dataHash [32]byte) ([]PlasmaDaTranslationHubDaCid, error) {
+	return _Contracts.Contract.GetAll(&_Contracts.CallOpts, submitter, dataHash)
 }
 
-// Get is a free data retrieval call binding the contract method 0x7b82d74e.
+// GetAll is a free data retrieval call binding the contract method 0x6e920d92.
 //
-// Solidity: function get(address submitter, bytes32 dataHash) view returns((bytes32,bytes)[] result)
-func (_Contracts *ContractsCallerSession) Get(submitter common.Address, dataHash [32]byte) ([]PlasmaDaTranslationHubDaCid, error) {
-	return _Contracts.Contract.Get(&_Contracts.CallOpts, submitter, dataHash)
+// Solidity: function getAll(address submitter, bytes32 dataHash) view returns((bytes32,bytes)[] result)
+func (_Contracts *ContractsCallerSession) GetAll(submitter common.Address, dataHash [32]byte) ([]PlasmaDaTranslationHubDaCid, error) {
+	return _Contracts.Contract.GetAll(&_Contracts.CallOpts, submitter, dataHash)
 }
 
 // GetExtendedAddresses is a free data retrieval call binding the contract method 0x1482c252.
@@ -331,37 +362,6 @@ func (_Contracts *ContractsSession) GetExtendedAddresses(submitter common.Addres
 // Solidity: function getExtendedAddresses(address submitter) view returns(address[])
 func (_Contracts *ContractsCallerSession) GetExtendedAddresses(submitter common.Address) ([]common.Address, error) {
 	return _Contracts.Contract.GetExtendedAddresses(&_Contracts.CallOpts, submitter)
-}
-
-// Translation is a free data retrieval call binding the contract method 0x872bb0a2.
-//
-// Solidity: function translation(address , bytes32 , bytes32 ) view returns(bytes)
-func (_Contracts *ContractsCaller) Translation(opts *bind.CallOpts, arg0 common.Address, arg1 [32]byte, arg2 [32]byte) ([]byte, error) {
-	var out []interface{}
-	err := _Contracts.contract.Call(opts, &out, "translation", arg0, arg1, arg2)
-
-	if err != nil {
-		return *new([]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([]byte)).(*[]byte)
-
-	return out0, err
-
-}
-
-// Translation is a free data retrieval call binding the contract method 0x872bb0a2.
-//
-// Solidity: function translation(address , bytes32 , bytes32 ) view returns(bytes)
-func (_Contracts *ContractsSession) Translation(arg0 common.Address, arg1 [32]byte, arg2 [32]byte) ([]byte, error) {
-	return _Contracts.Contract.Translation(&_Contracts.CallOpts, arg0, arg1, arg2)
-}
-
-// Translation is a free data retrieval call binding the contract method 0x872bb0a2.
-//
-// Solidity: function translation(address , bytes32 , bytes32 ) view returns(bytes)
-func (_Contracts *ContractsCallerSession) Translation(arg0 common.Address, arg1 [32]byte, arg2 [32]byte) ([]byte, error) {
-	return _Contracts.Contract.Translation(&_Contracts.CallOpts, arg0, arg1, arg2)
 }
 
 // VerifySignature is a free data retrieval call binding the contract method 0xdc72ba2c.

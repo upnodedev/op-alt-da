@@ -85,6 +85,7 @@ func AppFlags(cmd *cobra.Command) {
 	cmd.Flags().Int("port", 3128, "port (default is 3128)")
 	cmd.Flags().String("home", "", "config file (default is $HOME/.plasma-da)")
 	cmd.Flags().String("da", "", "data availability layer type (default is file store)")
+	cmd.Flags().String("da-id", "", "data availability layer id (default is 0x000c for celestia)")
 }
 
 func ParseAppFlags(cmd *cobra.Command) config.App {

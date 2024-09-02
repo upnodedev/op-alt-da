@@ -34,7 +34,7 @@ func NewIpfsStore(cfg Config, daId [32]byte, submitter *evm.Submitter) (*Store, 
 
 func (s *Store) Get(_ context.Context, key []byte) ([]byte, error) {
 	// get path from plasma hub contract
-	dataRead, err := s.submitter.GetSubmitter(s.submitter.Transactor.Address(), sha256.Sum256(key))
+	dataRead, err := s.submitter.GetSubmitter(s.submitter.Transactor.Address(), sha256.Sum256(key), s.DaId)
 	if err != nil {
 		return nil, err
 	}
@@ -42,10 +42,9 @@ func (s *Store) Get(_ context.Context, key []byte) ([]byte, error) {
 	if len(dataRead) == 0 {
 		return nil, common.ErrDataNotFound
 	}
-	data := dataRead[0]
 
 	var dataMap MappingCID
-	if err := json.Unmarshal(data.Cid, &dataMap); err != nil {
+	if err := json.Unmarshal(dataRead, &dataMap); err != nil {
 		return nil, err
 	}
 

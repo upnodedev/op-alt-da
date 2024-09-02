@@ -61,16 +61,16 @@ func NewCelestiaStore(cfg Config, daId [32]byte, submitter *evm.Submitter) (*Sto
 
 func (c *Store) Get(ctx context.Context, key []byte) ([]byte, error) {
 	// get ids from plasma hub contract
-	dataRead, err := c.submitter.GetSubmitter(c.submitter.Transactor.Address(), sha256.Sum256(key))
+	dataRead, err := c.submitter.GetSubmitter(c.submitter.Transactor.Address(), sha256.Sum256(key), c.daId)
 	if err != nil {
 		return nil, err
 	}
 	if len(dataRead) == 0 {
 		return nil, common.ErrDataNotFound
 	}
-	blob := dataRead[0]
+
 	var dataMap MappingCommitment
-	if err := json.Unmarshal(blob.Cid, &dataMap); err != nil {
+	if err := json.Unmarshal(dataRead, &dataMap); err != nil {
 		return nil, err
 	}
 	dataBlob, err := c.Client.Get(ctx, dataMap.Key, c.Namespace)

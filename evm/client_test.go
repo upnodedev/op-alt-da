@@ -58,14 +58,13 @@ func TestGetSubmitter(t *testing.T) {
 	t.Log(submitter.Transactor.Address().String())
 
 	dataHash := sha256.Sum256([]byte("data hash"))
-	data, err := submitter.GetSubmitter(submitter.Transactor.Address(), dataHash)
+	da := sha256.Sum256([]byte("da"))
+	data, err := submitter.GetSubmitter(submitter.Transactor.Address(), dataHash, da)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	for _, datum := range data {
-		fmt.Println(fmt.Sprintf("da: %s - cid: %s", datum.Da, datum.Cid))
-	}
+	fmt.Println(fmt.Sprintf("da: %s - cid: %s", da, data))
 }
 
 func TestSubmitData(t *testing.T) {
@@ -82,13 +81,11 @@ func TestSubmitData(t *testing.T) {
 	}
 	t.Log(tx)
 
-	data, err := submitter.GetSubmitter(submitter.Transactor.Address(), dataHash)
+	data, err := submitter.GetSubmitter(submitter.Transactor.Address(), dataHash, da)
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Log(len(data))
 
-	for _, datum := range data {
-		fmt.Println(fmt.Sprintf("da: %s - cid: %s", datum.Da, datum.Cid))
-	}
+	fmt.Println(fmt.Sprintf("cid: %s", data))
 }

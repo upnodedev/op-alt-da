@@ -43,17 +43,16 @@ func (s *ArStore) Get(_ context.Context, key []byte) ([]byte, error) {
 		return nil, common.ErrWalletNotFound
 	}
 	// get tx id from plasma hub contract
-	dataRead, err := s.submitter.GetSubmitter(s.submitter.Transactor.Address(), sha256.Sum256(key))
+	dataRead, err := s.submitter.GetSubmitter(s.submitter.Transactor.Address(), sha256.Sum256(key), s.daId)
 	if err != nil {
 		return nil, err
 	}
 	if len(dataRead) == 0 {
 		return nil, common.ErrDataNotFound
 	}
-	data := dataRead[0]
 
 	var dataMap MappingTx
-	if err := json.Unmarshal(data.Cid, &dataMap); err != nil {
+	if err := json.Unmarshal(dataRead, &dataMap); err != nil {
 		return nil, err
 	}
 

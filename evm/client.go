@@ -59,11 +59,11 @@ func (s *Submitter) SubmitData(dataHash [32]byte, da [32]byte, cid []byte) (stri
 	return receipt.TxHash.Hex(), nil
 }
 
-func (s *Submitter) GetSubmitter(submitter common.Address, dataHash [32]byte) ([]contracts.PlasmaDaTranslationHubDaCid, error) {
+func (s *Submitter) GetSubmitter(submitter common.Address, dataHash [32]byte, daId [32]byte) ([]byte, error) {
 	plasmaHub, err := contracts.NewContractsCaller(s.PlasmaHubAddress, s.Client)
 	if err != nil {
 		return nil, err
 	}
 
-	return plasmaHub.Get(&bind.CallOpts{}, submitter, dataHash)
+	return plasmaHub.Get(&bind.CallOpts{}, submitter, dataHash, daId)
 }

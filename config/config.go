@@ -40,13 +40,13 @@ func DefaultConfig() App {
 		Host:          "localhost",
 		Port:          8087,
 		DA:            "file",
-		DaID:          "0x000",
+		DaID:          "0x000c", // it is celestia
 		HomeDir:       homeDir,
 		EvmRpcUrl:     "https://sepolia.optimism.io",
 		KeyFile:       "",
 		Passphrase:    "passphrase",
 		ChainId:       11155420,
-		PlasmaHubAddr: "0x6210D43ab4F04E9EDC947ccEb690CA946175adD6",
+		PlasmaHubAddr: "0x865Cb4Ccdc123d5Ac1D8CDC1f967da1Eb111FcAd",
 	}
 
 	if homeDir := viper.GetString(PlasmaDaHomeDir); homeDir != "" {
