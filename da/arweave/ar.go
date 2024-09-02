@@ -2,19 +2,17 @@ package arweave
 
 import (
 	"context"
-	"encoding/hex"
+	"crypto/sha256"
 	"encoding/json"
 	"github.com/everFinance/goar"
 	"github.com/everFinance/goar/types"
 	"math/big"
-	"os"
-	"path"
 	"plasma/common"
+	"plasma/evm"
 )
 
 const (
-	DefaultArMapPath = ".plasma-da/data/ar"
-	DaAr             = "ar"
+	DaAr = "ar"
 )
 
 type MappingTx struct {
@@ -22,28 +20,21 @@ type MappingTx struct {
 }
 
 type ArStore struct {
-	Wallet *goar.Wallet
-
-	// temporary mapping the transaction in file
-	mappingPath string
+	Wallet    *goar.Wallet
+	daId      [32]byte
+	submitter *evm.Submitter
 }
 
-func NewArStore(cfg Config, homeDir string) (*ArStore, error) {
+func NewArStore(cfg Config, daId [32]byte, submitter *evm.Submitter) (*ArStore, error) {
 	wallet, err := goar.NewWalletFromPath(cfg.WalletPath, cfg.ClientUrl)
 	if err != nil {
 		return nil, err
 	}
 
-	mapPath := path.Join(homeDir, DefaultArMapPath)
-	if _, err := os.Stat(mapPath); os.IsNotExist(err) {
-		if err := os.MkdirAll(mapPath, 0755); err != nil {
-			return nil, err
-		}
-	}
-
 	return &ArStore{
-		Wallet:      wallet,
-		mappingPath: mapPath,
+		Wallet:    wallet,
+		daId:      daId,
+		submitter: submitter,
 	}, nil
 }
 
@@ -51,14 +42,18 @@ func (s *ArStore) Get(_ context.Context, key []byte) ([]byte, error) {
 	if s.Wallet == nil {
 		return nil, common.ErrWalletNotFound
 	}
-	// get tx id from data map
-	dataRead, err := s.readFile(key)
+	// get tx id from plasma hub contract
+	dataRead, err := s.submitter.GetSubmitter(s.submitter.Transactor.Address(), sha256.Sum256(key))
 	if err != nil {
 		return nil, err
 	}
+	if len(dataRead) == 0 {
+		return nil, common.ErrDataNotFound
+	}
+	data := dataRead[0]
 
 	var dataMap MappingTx
-	if err := json.Unmarshal(dataRead, &dataMap); err != nil {
+	if err := json.Unmarshal(data.Cid, &dataMap); err != nil {
 		return nil, err
 	}
 
@@ -98,24 +93,10 @@ func (s *ArStore) Put(_ context.Context, key []byte, value []byte) error {
 	if err != nil {
 		return err
 	}
-	return s.writeFile(key, data)
-}
 
-func (s *ArStore) readFile(key []byte) ([]byte, error) {
-	data, err := os.ReadFile(s.fileName(key))
+	_, err = s.submitter.SubmitData(sha256.Sum256(key), s.daId, data)
 	if err != nil {
-		if os.IsNotExist(err) {
-			return nil, common.ErrNotFound
-		}
-		return nil, err
+		return err
 	}
-	return data, nil
-}
-
-func (s *ArStore) writeFile(key []byte, value []byte) error {
-	return os.WriteFile(s.fileName(key), value, 0600)
-}
-
-func (s *ArStore) fileName(key []byte) string {
-	return path.Join(s.mappingPath, hex.EncodeToString(key))
+	return nil
 }

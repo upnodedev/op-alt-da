@@ -3,65 +3,59 @@ package ipfs
 import (
 	"bytes"
 	"context"
-	"encoding/hex"
+	"crypto/sha256"
 	"encoding/json"
 	shell "github.com/ipfs/go-ipfs-api"
-	"os"
-	"path"
 	"plasma/common"
+	"plasma/evm"
 )
 
-const (
-	DefaultIpfsMapPath = ".plasma-da/data/ipfs"
-	DaIpfs             = "ipfs"
-)
+const DaIpfs = "ipfs"
 
 type MappingCID struct {
 	Path string `json:"path"`
 }
 
 type Store struct {
-	Shel *shell.Shell
-
-	// temporary file mapping
-	mappingPath string
+	Shel      *shell.Shell
+	DaId      [32]byte
+	submitter *evm.Submitter
 }
 
-func NewIpfsStore(cfg Config, homeDir string) (*Store, error) {
+func NewIpfsStore(cfg Config, daId [32]byte, submitter *evm.Submitter) (*Store, error) {
 	sh := shell.NewShell(cfg.Url)
 
-	mapPath := path.Join(homeDir, DefaultIpfsMapPath)
-	if _, err := os.Stat(mapPath); os.IsNotExist(err) {
-		if err := os.MkdirAll(mapPath, 0755); err != nil {
-			return nil, err
-		}
-	}
-
 	return &Store{
-		Shel:        sh,
-		mappingPath: mapPath,
+		Shel:      sh,
+		DaId:      daId,
+		submitter: submitter,
 	}, nil
 }
 
 func (s *Store) Get(_ context.Context, key []byte) ([]byte, error) {
-	// get path from data map
-	dataRead, err := s.readFile(key)
+	// get path from plasma hub contract
+	dataRead, err := s.submitter.GetSubmitter(s.submitter.Transactor.Address(), sha256.Sum256(key))
 	if err != nil {
 		return nil, err
 	}
 
+	if len(dataRead) == 0 {
+		return nil, common.ErrDataNotFound
+	}
+	data := dataRead[0]
+
 	var dataMap MappingCID
-	if err := json.Unmarshal(dataRead, &dataMap); err != nil {
+	if err := json.Unmarshal(data.Cid, &dataMap); err != nil {
 		return nil, err
 	}
 
-	data, err := s.Shel.Cat(dataMap.Path)
+	dataPath, err := s.Shel.Cat(dataMap.Path)
 	if err != nil {
 		return nil, err
 	}
 
 	buf := new(bytes.Buffer)
-	_, err = buf.ReadFrom(data)
+	_, err = buf.ReadFrom(dataPath)
 	if err != nil {
 		return nil, err
 	}
@@ -85,24 +79,9 @@ func (s *Store) Put(_ context.Context, key []byte, value []byte) error {
 		return err
 	}
 
-	return s.writeFile(key, dataWrite)
-}
-
-func (s *Store) readFile(key []byte) ([]byte, error) {
-	data, err := os.ReadFile(s.fileName(key))
+	_, err = s.submitter.SubmitData(sha256.Sum256(key), s.DaId, dataWrite)
 	if err != nil {
-		if os.IsNotExist(err) {
-			return nil, common.ErrNotFound
-		}
-		return nil, err
+		return err
 	}
-	return data, nil
-}
-
-func (s *Store) writeFile(key []byte, value []byte) error {
-	return os.WriteFile(s.fileName(key), value, 0600)
-}
-
-func (s *Store) fileName(key []byte) string {
-	return path.Join(s.mappingPath, hex.EncodeToString(key))
+	return nil
 }

@@ -2,14 +2,14 @@ package celestia
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"github.com/rollkit/go-da"
 	"github.com/rollkit/go-da/proxy"
-	"os"
-	"path"
 	"plasma/common"
+	"plasma/evm"
 	"time"
 )
 
@@ -21,10 +21,7 @@ var ErrFailedToSubmit = errors.New("failed to submit blob")
 
 var ErrBlobNotFound = errors.New("blob: not found")
 
-const (
-	DefaultDataMapPath = ".plasma-da/data/celestia"
-	DaCelestia         = "celestia"
-)
+const DaCelestia = "celestia"
 
 type MappingCommitment struct {
 	// key is the key of the blob
@@ -36,13 +33,12 @@ type Store struct {
 	GetTimeout time.Duration
 	Namespace  da.Namespace
 	cfg        Config
-
-	// temporary file mapping
-	mappingPath string
+	daId       [32]byte
+	submitter  *evm.Submitter
 }
 
 // NewCelestiaStore creates a new CelestiaStore.
-func NewCelestiaStore(cfg Config, homeDir string) (*Store, error) {
+func NewCelestiaStore(cfg Config, daId [32]byte, submitter *evm.Submitter) (*Store, error) {
 	client, err := proxy.NewClient(cfg.Rpc, cfg.AuthToken)
 	if err != nil {
 		return nil, err
@@ -53,32 +49,28 @@ func NewCelestiaStore(cfg Config, homeDir string) (*Store, error) {
 		return nil, err
 	}
 
-	mapPath := path.Join(homeDir, DefaultDataMapPath)
-
-	if _, err := os.Stat(mapPath); os.IsNotExist(err) {
-		if err := os.MkdirAll(mapPath, 0755); err != nil {
-			return nil, err
-		}
-	}
-
 	return &Store{
-		Client:      client,
-		GetTimeout:  time.Minute,
-		Namespace:   ns,
-		cfg:         cfg,
-		mappingPath: mapPath,
+		Client:     client,
+		GetTimeout: time.Minute,
+		Namespace:  ns,
+		cfg:        cfg,
+		daId:       daId,
+		submitter:  submitter,
 	}, nil
 }
 
 func (c *Store) Get(ctx context.Context, key []byte) ([]byte, error) {
-	// get ids from data map
-	dataRead, err := c.readFile(key)
+	// get ids from plasma hub contract
+	dataRead, err := c.submitter.GetSubmitter(c.submitter.Transactor.Address(), sha256.Sum256(key))
 	if err != nil {
 		return nil, err
 	}
-
+	if len(dataRead) == 0 {
+		return nil, common.ErrDataNotFound
+	}
+	blob := dataRead[0]
 	var dataMap MappingCommitment
-	if err := json.Unmarshal(dataRead, &dataMap); err != nil {
+	if err := json.Unmarshal(blob.Cid, &dataMap); err != nil {
 		return nil, err
 	}
 	dataBlob, err := c.Client.Get(ctx, dataMap.Key, c.Namespace)
@@ -116,24 +108,9 @@ func (c *Store) Put(ctx context.Context, key []byte, value []byte) error {
 		return err
 	}
 
-	return c.writeFile(key, dataWrite)
-}
-
-func (c *Store) readFile(key []byte) ([]byte, error) {
-	data, err := os.ReadFile(c.fileName(key))
+	_, err = c.submitter.SubmitData(sha256.Sum256(key), c.daId, dataWrite)
 	if err != nil {
-		if os.IsNotExist(err) {
-			return nil, common.ErrNotFound
-		}
-		return nil, err
+		return err
 	}
-	return data, nil
-}
-
-func (c *Store) writeFile(key []byte, value []byte) error {
-	return os.WriteFile(c.fileName(key), value, 0600)
-}
-
-func (c *Store) fileName(key []byte) string {
-	return path.Join(c.mappingPath, hex.EncodeToString(key))
+	return nil
 }

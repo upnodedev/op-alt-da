@@ -19,3 +19,6 @@ var ErrInsufficientBalance = errors.New("insufficient balance")
 
 // ErrWalletNotFound is returned when the wallet is not found.
 var ErrWalletNotFound = errors.New("wallet not found")
+
+// ErrDataNotFound is returned when the data mapping on-chain is not found.
+var ErrDataNotFound = errors.New("data not found")

@@ -13,6 +13,7 @@ import (
 	"plasma/da/celestia"
 	"plasma/da/file"
 	"plasma/da/ipfs"
+	"plasma/evm"
 )
 
 func StartCmd() *cobra.Command {
@@ -29,6 +30,12 @@ func StartCmd() *cobra.Command {
 			if homeDir == "" {
 				homeDir = userDir + "/.plasma-da"
 			}
+			submitter, err := evm.NewSubmitter(cfgApp)
+			if err != nil {
+				return err
+			}
+			var daId [32]byte
+			copy(daId[:], cfgApp.DaID)
 
 			var store da.KVStore
 			switch cfgApp.DA {
@@ -40,19 +47,19 @@ func StartCmd() *cobra.Command {
 				}
 			case celestia.DaCelestia:
 				cfgCelestia := celestia.ParseConfig(cmd)
-				store, err = celestia.NewCelestiaStore(cfgCelestia, homeDir)
+				store, err = celestia.NewCelestiaStore(cfgCelestia, daId, submitter)
 				if err != nil {
 					return err
 				}
 			case ipfs.DaIpfs:
 				cfgIpfs := ipfs.ParseConfig(cmd)
-				store, err = ipfs.NewIpfsStore(cfgIpfs, homeDir)
+				store, err = ipfs.NewIpfsStore(cfgIpfs, daId, submitter)
 				if err != nil {
 					return err
 				}
 			case arweave.DaAr:
 				cfgAr := arweave.ParseConfig(cmd)
-				store, err = arweave.NewArStore(cfgAr, homeDir)
+				store, err = arweave.NewArStore(cfgAr, daId, submitter)
 				if err != nil {
 					return err
 				}
