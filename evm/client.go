@@ -12,6 +12,7 @@ import (
 	"os"
 	"plasma/config"
 	"plasma/evm/contracts"
+	"time"
 )
 
 type Submitter struct {
@@ -51,6 +52,7 @@ func (s *Submitter) SubmitData(dataHash [32]byte, da [32]byte, cid []byte) (stri
 			}
 			return plasmaHub.Submit(opts, dataHash, da, cid)
 		},
+		eth.WithPollingInterval(1*time.Second),
 	)
 	if err != nil {
 		return "", err

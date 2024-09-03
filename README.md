@@ -17,7 +17,8 @@ make install
 
 ### Run the Plasma-DA use Celestia as data availability solution. 
 ```shell 
-plasma-da start --da=celestia  --celestia.auth_token=<api_token> --celestia.namespace=<namespace> --celestia.rpc=<rpc_url>
+plasma-da start --da=celestia --da-id=0x000c  --celestia.auth_token=<api_token> --celestia.namespace=<namespace> --celestia.rpc=<rpc_url> 
+--evm-rpc-url=<evm_rpc_url> --chain-id=<chain_id> --key-file=<key_file> --passphrase=<passphrase> --plasma-hub-addr=<plasma-hub-address>
 ```
 
 ### Run the Plasma-DA use FileStore as data availability solution. 
@@ -27,10 +28,12 @@ plasma-da start --da=filestore --filestore.path=<path to store data>
 
 ### Run the Plasma-DA use IPFS as data availability solution. 
 ```shell
-plasma-da start --da=ipfs --ipfs.url=<ipfs node url>
+plasma-da start --da=ipfs --da-id=0x000e --ipfs.url=<ipfs node url>
+--evm-rpc-url=<evm_rpc_url> --chain-id=<chain_id> --key-file=<key_file> --passphrase=<passphrase> --plasma-hub-addr=<plasma-hub-address>
 ```
 
 ### Run the Plasma-DA use ArWeave as data availability solution. 
 ```shell
- plasma-da start --da=ar --ar.client_url=http://localhost:8080 --ar.wallet_path=<path to wallet json file>
+ plasma-da start --da=ar --da-id=0x000d --ar.client_url=http://localhost:8080 --ar.wallet_path=<path to wallet json file>
+ --evm-rpc-url=<evm_rpc_url> --chain-id=<chain_id> --key-file=<key_file> --passphrase=<passphrase> --plasma-hub-addr=<plasma-hub-address>
 ```

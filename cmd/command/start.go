@@ -86,6 +86,11 @@ func AppFlags(cmd *cobra.Command) {
 	cmd.Flags().String("home", "", "config file (default is $HOME/.plasma-da)")
 	cmd.Flags().String("da", "", "data availability layer type (default is file store)")
 	cmd.Flags().String("da-id", "", "data availability layer id (default is 0x000c for celestia)")
+	cmd.Flags().String("evm-rpc-url", "", "the rpc url for the evm")
+	cmd.Flags().String("key-file", "", "the key file of account use for submitting data mapping")
+	cmd.Flags().String("passphrase", "", "the passphrase for the key file")
+	cmd.Flags().Int64("chain-id", 0, "the chain id for the evm")
+	cmd.Flags().String("plasma-hub-addr", "", "the plasma hub address")
 }
 
 func ParseAppFlags(cmd *cobra.Command) config.App {
@@ -101,6 +106,24 @@ func ParseAppFlags(cmd *cobra.Command) config.App {
 	}
 	if daLayer := cmd.Flag("da").Value.String(); daLayer != "" {
 		cfgApp.DA = daLayer
+	}
+	if daId := cmd.Flag("da-id").Value.String(); daId != "" {
+		cfgApp.DaID = daId
+	}
+	if evmRpcUrl := cmd.Flag("evm-rpc-url").Value.String(); evmRpcUrl != "" {
+		cfgApp.EvmRpcUrl = evmRpcUrl
+	}
+	if keyFile := cmd.Flag("key-file").Value.String(); keyFile != "" {
+		cfgApp.KeyFile = keyFile
+	}
+	if passphrase := cmd.Flag("passphrase").Value.String(); passphrase != "" {
+		cfgApp.Passphrase = passphrase
+	}
+	if chainId, err := cmd.Flags().GetInt64("chain-id"); err == nil {
+		cfgApp.ChainId = chainId
+	}
+	if plasmaHubAddr := cmd.Flag("plasma-hub-addr").Value.String(); plasmaHubAddr != "" {
+		cfgApp.PlasmaHubAddr = plasmaHubAddr
 	}
 
 	return cfgApp
