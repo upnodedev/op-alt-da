@@ -1,6 +1,9 @@
-package plasma
+package op_alt_da
 
 import (
+	"alt-da/common"
+	"alt-da/config"
+	"alt-da/da"
 	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -8,9 +11,6 @@ import (
 	"io"
 	"net/http"
 	"path"
-	"plasma/common"
-	"plasma/config"
-	"plasma/da"
 )
 
 type DAServer struct {

@@ -1,19 +1,19 @@
 package command
 
 import (
+	opaltda "alt-da"
+	"alt-da/config"
+	"alt-da/da"
+	"alt-da/da/arweave"
+	"alt-da/da/celestia"
+	"alt-da/da/file"
+	"alt-da/da/ipfs"
+	"alt-da/evm"
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/slog"
 	"os"
-	"plasma"
-	"plasma/config"
-	"plasma/da"
-	"plasma/da/arweave"
-	"plasma/da/celestia"
-	"plasma/da/file"
-	"plasma/da/ipfs"
-	"plasma/evm"
 )
 
 func StartCmd() *cobra.Command {
@@ -66,7 +66,7 @@ func StartCmd() *cobra.Command {
 			default:
 				return errors.New(fmt.Sprintf("unknown DA type: %s", cfgApp.DA))
 			}
-			server := plasma.NewDAServer(cfgApp, store, slog.Default())
+			server := opaltda.NewDAServer(cfgApp, store, slog.Default())
 			server.Start()
 			return nil
 		},
@@ -90,7 +90,7 @@ func AppFlags(cmd *cobra.Command) {
 	cmd.Flags().String("key-file", "", "the key file of account use for submitting data mapping")
 	cmd.Flags().String("passphrase", "", "the passphrase for the key file")
 	cmd.Flags().Int64("chain-id", 0, "the chain id for the evm")
-	cmd.Flags().String("plasma-hub-addr", "", "the plasma hub address")
+	cmd.Flags().String("alt-da-hub-addr", "", "the alt da hub address")
 }
 
 func ParseAppFlags(cmd *cobra.Command) config.App {
@@ -122,8 +122,8 @@ func ParseAppFlags(cmd *cobra.Command) config.App {
 	if chainId, err := cmd.Flags().GetInt64("chain-id"); err == nil {
 		cfgApp.ChainId = chainId
 	}
-	if plasmaHubAddr := cmd.Flag("plasma-hub-addr").Value.String(); plasmaHubAddr != "" {
-		cfgApp.PlasmaHubAddr = plasmaHubAddr
+	if hubAddr := cmd.Flag("alt-da-hub-addr").Value.String(); hubAddr != "" {
+		cfgApp.AltDaHubAddr = hubAddr
 	}
 
 	return cfgApp

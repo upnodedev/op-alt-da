@@ -13,21 +13,21 @@ ifeq (,$(VERSION))
 endif
 
 
-ldflags = -X plasma/version.BuildVersion=$(VERSION) \
-		  -X plasma/version.BuildCommit=$(COMMIT) \
-		  -X plasma/version.BuildTime=$(TIME)
+ldflags = -X alt-da/version.BuildVersion=$(VERSION) \
+		  -X alt-da/version.BuildCommit=$(COMMIT) \
+		  -X alt-da/version.BuildTime=$(TIME)
 
 BUILD_FLAGS := -ldflags '$(ldflags)'
 # ---------------------------------------------------------------------------- #
 #                                 Make targets                                 #
 # ---------------------------------------------------------------------------- #
 .PHONY: install
-install: go.sum ## Installs the plasma-da binary
+install: go.sum ## Installs the alt-da binary
 	@go mod tidy
 	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/alt-da
 
 
 .PHONY: build
-build: ## Compiles the plasma-da binary
+build: ## Compiles the alt-da binary
 	go mod tidy
 	go build -o build/alt-da $(BUILD_FLAGS) ./cmd/alt-da

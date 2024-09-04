@@ -1,9 +1,9 @@
 package command
 
 import (
+	"alt-da/version"
 	"fmt"
 	"github.com/spf13/cobra"
-	"plasma/version"
 )
 
 func VersionCmd() *cobra.Command {

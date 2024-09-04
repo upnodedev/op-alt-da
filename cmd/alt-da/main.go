@@ -1,13 +1,13 @@
 package main
 
 import (
+	"alt-da/cmd/command"
 	"fmt"
 	"github.com/spf13/viper"
 	"os"
-	"plasma/cmd/command"
 )
 
-const PrefixEnv = "PLASMA_DA"
+const PrefixEnv = "ALT_DA"
 
 func main() {
 	viper.AutomaticEnv()

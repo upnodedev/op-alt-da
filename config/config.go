@@ -16,20 +16,20 @@ const (
 	PlasmaKeyFile    = "KEY_FILE"
 	PlasmaPassphrase = "PASSPHRASE"
 	PlasmaChainId    = "CHAIN_ID"
-	PlasmaHubAddr    = "PLASMA_HUB_ADDR"
+	PlasmaHubAddr    = "ALT_DA_HUB_ADDR"
 )
 
 type App struct {
-	Host          string `json:"host"`
-	Port          int    `json:"port"`
-	DA            string `json:"da"`
-	DaID          string `json:"da_id"`
-	HomeDir       string `json:"home_dir"`
-	EvmRpcUrl     string `json:"evm_rpc_url"`
-	KeyFile       string `json:"key_file"`
-	Passphrase    string `json:"passphrase"`
-	ChainId       int64  `json:"chain_id"`
-	PlasmaHubAddr string `json:"plasma_hub_addr"`
+	Host         string `json:"host"`
+	Port         int    `json:"port"`
+	DA           string `json:"da"`
+	DaID         string `json:"da_id"`
+	HomeDir      string `json:"home_dir"`
+	EvmRpcUrl    string `json:"evm_rpc_url"`
+	KeyFile      string `json:"key_file"`
+	Passphrase   string `json:"passphrase"`
+	ChainId      int64  `json:"chain_id"`
+	AltDaHubAddr string `json:"alt_da_hub_addr"`
 }
 
 func DefaultConfig() App {
@@ -37,16 +37,16 @@ func DefaultConfig() App {
 	// if set by flag, it will override the default values
 	homeDir, _ := os.UserHomeDir()
 	cfg := App{
-		Host:          "localhost",
-		Port:          8087,
-		DA:            "file",
-		DaID:          "0x000c", // it is celestia
-		HomeDir:       homeDir,
-		EvmRpcUrl:     "https://sepolia.optimism.io",
-		KeyFile:       "",
-		Passphrase:    "passphrase",
-		ChainId:       11155420,
-		PlasmaHubAddr: "0x865Cb4Ccdc123d5Ac1D8CDC1f967da1Eb111FcAd",
+		Host:         "localhost",
+		Port:         8087,
+		DA:           "file",
+		DaID:         "0x000c", // it is celestia
+		HomeDir:      homeDir,
+		EvmRpcUrl:    "https://sepolia.optimism.io",
+		KeyFile:      "",
+		Passphrase:   "passphrase",
+		ChainId:      11155420,
+		AltDaHubAddr: "0x865Cb4Ccdc123d5Ac1D8CDC1f967da1Eb111FcAd",
 	}
 
 	if homeDir := viper.GetString(PlasmaDaHomeDir); homeDir != "" {
@@ -77,7 +77,7 @@ func DefaultConfig() App {
 		cfg.ChainId = chainId
 	}
 	if plasmaHubAddr := viper.GetString(PlasmaHubAddr); plasmaHubAddr != "" {
-		cfg.PlasmaHubAddr = plasmaHubAddr
+		cfg.AltDaHubAddr = plasmaHubAddr
 	}
 
 	return cfg

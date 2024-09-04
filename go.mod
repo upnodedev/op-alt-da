@@ -1,4 +1,4 @@
-module plasma
+module alt-da
 
 go 1.22
 

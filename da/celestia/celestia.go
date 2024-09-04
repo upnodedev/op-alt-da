@@ -1,6 +1,8 @@
 package celestia
 
 import (
+	"alt-da/common"
+	"alt-da/evm"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -8,8 +10,6 @@ import (
 	"errors"
 	"github.com/rollkit/go-da"
 	"github.com/rollkit/go-da/proxy"
-	"plasma/common"
-	"plasma/evm"
 	"time"
 )
 

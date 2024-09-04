@@ -1,6 +1,8 @@
 package evm
 
 import (
+	"alt-da/config"
+	"alt-da/evm/contracts"
 	"fmt"
 	"github.com/celer-network/goutils/eth"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -10,15 +12,13 @@ import (
 	ethrpc "github.com/ethereum/go-ethereum/rpc"
 	"math/big"
 	"os"
-	"plasma/config"
-	"plasma/evm/contracts"
 	"time"
 )
 
 type Submitter struct {
-	Transactor       *eth.Transactor
-	Client           *ethclient.Client
-	PlasmaHubAddress common.Address
+	Transactor      *eth.Transactor
+	Client          *ethclient.Client
+	AltDaHubAddress common.Address
 }
 
 func NewSubmitter(cfg config.App) (*Submitter, error) {
@@ -38,19 +38,19 @@ func NewSubmitter(cfg config.App) (*Submitter, error) {
 		return nil, err
 	}
 
-	plasmaHubAddress := common.HexToAddress(cfg.PlasmaHubAddr)
-	return &Submitter{Transactor: transactor, Client: ec, PlasmaHubAddress: plasmaHubAddress}, nil
+	altDaHubAddress := common.HexToAddress(cfg.AltDaHubAddr)
+	return &Submitter{Transactor: transactor, Client: ec, AltDaHubAddress: altDaHubAddress}, nil
 }
 
 func (s *Submitter) SubmitData(dataHash [32]byte, da [32]byte, cid []byte) (string, error) {
 	receipt, err := s.Transactor.TransactWaitMined(
 		fmt.Sprintf("SubmitData dataHash=%x da=%x cid=%x", dataHash, da, cid),
 		func(transactor bind.ContractTransactor, opts *bind.TransactOpts) (*types.Transaction, error) {
-			plasmaHub, err := contracts.NewContractsTransactor(s.PlasmaHubAddress, transactor)
+			altDaHub, err := contracts.NewContractsTransactor(s.AltDaHubAddress, transactor)
 			if err != nil {
 				return nil, err
 			}
-			return plasmaHub.Submit(opts, dataHash, da, cid)
+			return altDaHub.Submit(opts, dataHash, da, cid)
 		},
 		eth.WithPollingInterval(1*time.Second),
 	)
@@ -62,7 +62,7 @@ func (s *Submitter) SubmitData(dataHash [32]byte, da [32]byte, cid []byte) (stri
 }
 
 func (s *Submitter) GetSubmitter(submitter common.Address, dataHash [32]byte, daId [32]byte) ([]byte, error) {
-	plasmaHub, err := contracts.NewContractsCaller(s.PlasmaHubAddress, s.Client)
+	plasmaHub, err := contracts.NewContractsCaller(s.AltDaHubAddress, s.Client)
 	if err != nil {
 		return nil, err
 	}

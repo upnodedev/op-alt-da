@@ -1,9 +1,9 @@
-package plasma
+package op_alt_da
 
 import (
+	"alt-da/common"
 	"bytes"
 	"github.com/ethereum/go-ethereum/crypto"
-	"plasma/common"
 )
 
 // CommitmentType is the commitment type prefix.

@@ -1,7 +1,7 @@
-package plasma
+package op_alt_da
 
 import (
-	"plasma/common"
+	"alt-da/common"
 	"testing"
 
 	"github.com/stretchr/testify/require"

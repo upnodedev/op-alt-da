@@ -20,7 +20,7 @@ make install
 ### Run the Alt-DA use Celestia as data availability solution. 
 ```shell 
 alt-da start --da=celestia --da-id=0x000c  --celestia.auth_token=<api_token> --celestia.namespace=<namespace> --celestia.rpc=<rpc_url> 
---evm-rpc-url=<evm_rpc_url> --chain-id=<chain_id> --key-file=<key_file> --passphrase=<passphrase> --plasma-hub-addr=<plasma-hub-address>
+--evm-rpc-url=<evm_rpc_url> --chain-id=<chain_id> --key-file=<key_file> --passphrase=<passphrase> --alt-da-hub-addr=<alt-da-hub-address>
 ```
 
 ### Run the Alt-DA use FileStore as data availability solution. 
@@ -31,11 +31,11 @@ alt-da start --da=filestore --filestore.path=<path to store data>
 ### Run the Alt-DA use IPFS as data availability solution. 
 ```shell
 alt-da start --da=ipfs --da-id=0x000e --ipfs.url=<ipfs node url>
---evm-rpc-url=<evm_rpc_url> --chain-id=<chain_id> --key-file=<key_file> --passphrase=<passphrase> --plasma-hub-addr=<plasma-hub-address>
+--evm-rpc-url=<evm_rpc_url> --chain-id=<chain_id> --key-file=<key_file> --passphrase=<passphrase> --alt-da-hub-addr=<alt-da-hub-address>
 ```
 
 ### Run the Alt-DA use ArWeave as data availability solution. 
 ```shell
 alt-da start --da=ar --da-id=0x000d --ar.client_url=http://localhost:8080 --ar.wallet_path=<path to wallet json file>
---evm-rpc-url=<evm_rpc_url> --chain-id=<chain_id> --key-file=<key_file> --passphrase=<passphrase> --plasma-hub-addr=<plasma-hub-address>
+--evm-rpc-url=<evm_rpc_url> --chain-id=<chain_id> --key-file=<key_file> --passphrase=<passphrase> --alt-da-hub-addr=<alt-da-hub-address>
 ```
