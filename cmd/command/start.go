@@ -119,7 +119,7 @@ func ParseAppFlags(cmd *cobra.Command) config.App {
 	if passphrase := cmd.Flag("passphrase").Value.String(); passphrase != "" {
 		cfgApp.Passphrase = passphrase
 	}
-	if chainId, err := cmd.Flags().GetInt64("chain-id"); err == nil {
+	if chainId, err := cmd.Flags().GetInt64("chain-id"); err == nil && chainId > 0 {
 		cfgApp.ChainId = chainId
 	}
 	if hubAddr := cmd.Flag("alt-da-hub-addr").Value.String(); hubAddr != "" {
