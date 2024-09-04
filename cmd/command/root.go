@@ -5,9 +5,9 @@ import (
 )
 
 var rootCommand = &cobra.Command{
-	Use:   "plasma-da",
-	Short: "Plasma DA is a simple CLI tool.",
-	Long:  `Plasma DA is a simple CLI tool to roll up data to multiple services.`,
+	Use:   "alt-da",
+	Short: "Alt DA is a simple CLI tool.",
+	Long:  `Alt DA is a simple CLI tool to roll up data to multiple services.`,
 }
 
 func Execute() error {

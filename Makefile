@@ -24,10 +24,10 @@ BUILD_FLAGS := -ldflags '$(ldflags)'
 .PHONY: install
 install: go.sum ## Installs the plasma-da binary
 	@go mod tidy
-	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/plasma-da
+	@go install -mod=readonly $(BUILD_FLAGS) ./cmd/alt-da
 
 
 .PHONY: build
 build: ## Compiles the plasma-da binary
 	go mod tidy
-	go build -o build/plasma-da $(BUILD_FLAGS) ./cmd/plasma-da
+	go build -o build/alt-da $(BUILD_FLAGS) ./cmd/alt-da

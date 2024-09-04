@@ -28,7 +28,7 @@ func StartCmd() *cobra.Command {
 			cfgApp := ParseAppFlags(cmd)
 			homeDir := cfgApp.HomeDir
 			if homeDir == "" {
-				homeDir = userDir + "/.plasma-da"
+				homeDir = userDir + "/.alt-da"
 			}
 			submitter, err := evm.NewSubmitter(cfgApp)
 			if err != nil {
@@ -83,7 +83,7 @@ func StartCmd() *cobra.Command {
 func AppFlags(cmd *cobra.Command) {
 	cmd.Flags().String("host", "", "host (default is localhost)")
 	cmd.Flags().Int("port", 3128, "port (default is 3128)")
-	cmd.Flags().String("home", "", "config file (default is $HOME/.plasma-da)")
+	cmd.Flags().String("home", "", "config file (default is $HOME/.alt-da)")
 	cmd.Flags().String("da", "", "data availability layer type (default is file store)")
 	cmd.Flags().String("da-id", "", "data availability layer id (default is 0x000c for celestia)")
 	cmd.Flags().String("evm-rpc-url", "", "the rpc url for the evm")

@@ -17,7 +17,7 @@ type Config struct {
 func DefaultFileStoreCfg() Config {
 	homedir, _ := os.UserHomeDir()
 	cfg := Config{
-		Directory: path.Join(homedir, ".plasma-da/data/filestore"),
+		Directory: path.Join(homedir, ".alt-da/data/filestore"),
 	}
 	if plasmaFilePath := viper.GetString(PlasmaFilePath); plasmaFilePath != "" {
 		cfg.Directory = plasmaFilePath

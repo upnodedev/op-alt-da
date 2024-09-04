@@ -8,7 +8,7 @@ import (
 	"text/template"
 )
 
-const DefaultHomeDir = ".plasma-da"
+const DefaultHomeDir = ".alt-da"
 
 const ConfigTemplate = `[server]
 http_host = "localhost"
@@ -24,7 +24,7 @@ gas_price = 0.002
 eth_fallback_disabled = false
 
 [filestore]
-path = ".plasma-da/data/filestore"
+path = ".alt-da/data/filestore"
 `
 
 func InitConfigCmd() *cobra.Command {
@@ -33,7 +33,6 @@ func InitConfigCmd() *cobra.Command {
 		Short: "Initialize the configuration",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			homeDir := cmd.Flag("home").Value.String()
-			network := cmd.Flag("network").Value.String()
 			da := cmd.Flag("da").Value.String()
 			userDir, err := os.UserHomeDir()
 			if err != nil {
@@ -49,7 +48,7 @@ func InitConfigCmd() *cobra.Command {
 			}
 
 			// create the config file
-			if err := createConfig(homeDir, network, da); err != nil {
+			if err := createConfig(homeDir, da); err != nil {
 				return err
 			}
 
@@ -58,14 +57,14 @@ func InitConfigCmd() *cobra.Command {
 	}
 
 	// set the flags
-	initCmd.Flags().String("home", "", "config file of the plasma-da (default is $HOME/.plasma-da)")
+	initCmd.Flags().String("home", "", "config file of the alt-da (default is $HOME/.alt-da)")
 	initCmd.Flags().String("network", "local", "network type")
 	initCmd.Flags().String("da", "file", "data availability layer type")
 
 	return initCmd
 }
 
-func createConfig(homeDir, network, da string) error {
+func createConfig(homeDir, da string) error {
 	configPath := homeDir + "/config"
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		if err := os.MkdirAll(configPath, 0755); err != nil {
@@ -118,7 +117,7 @@ func createConfig(homeDir, network, da string) error {
 			}
 		}
 
-		fmt.Println(`Config plasma-da is already initialized. Please check the config file at: `, configFile)
+		fmt.Println(`Config alt-da is already initialized. Please check the config file at: `, configFile)
 	}
 	return nil
 }
