@@ -7,7 +7,6 @@ const (
 	PlasmaCelestiaAuthToken           = "CELESTIA_AUTH_TOKEN"
 	PlasmaCelestiaNamespace           = "CELESTIA_NAMESPACE"
 	PlasmaCelestiaEthFallbackDisabled = "CELESTIA_ETH_FALLBACK_DISABLED"
-	PlasmaCelestiaMaxBlobSize         = "CELESTIA_MAX_BLOB_SIZE"
 	PlasmaCelestiaGasPrice            = "CELESTIA_GAS_PRICE"
 )
 
@@ -16,7 +15,6 @@ type Config struct {
 	AuthToken           string
 	Namespace           string
 	EthFallbackDisabled bool
-	MaxBlobSize         uint64
 	GasPrice            float64
 }
 
@@ -26,7 +24,6 @@ func DefaultCelestiaConfig() Config {
 		AuthToken:           "",
 		Namespace:           "",
 		EthFallbackDisabled: false,
-		MaxBlobSize:         2000,
 		GasPrice:            0.002,
 	}
 
@@ -41,9 +38,6 @@ func DefaultCelestiaConfig() Config {
 	}
 	if ethFallbackDisabled := viper.GetBool(PlasmaCelestiaEthFallbackDisabled); ethFallbackDisabled {
 		cfg.EthFallbackDisabled = ethFallbackDisabled
-	}
-	if maxBlobSize := viper.GetUint64(PlasmaCelestiaMaxBlobSize); maxBlobSize > 0 {
-		cfg.MaxBlobSize = maxBlobSize
 	}
 	if gasPrice := viper.GetFloat64(PlasmaCelestiaGasPrice); gasPrice > 0 {
 		cfg.GasPrice = gasPrice

@@ -8,13 +8,11 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"time"
+
 	"github.com/rollkit/go-da"
 	"github.com/rollkit/go-da/proxy"
-	"time"
 )
-
-// ErrBlobTooLarge is returned when the blob is too large.
-var ErrBlobTooLarge = errors.New("blob too large")
 
 // ErrFailedToSubmit is returned when the blob submission fails.
 var ErrFailedToSubmit = errors.New("failed to submit blob")
@@ -84,10 +82,6 @@ func (c *Store) Get(ctx context.Context, key []byte) ([]byte, error) {
 }
 
 func (c *Store) Put(ctx context.Context, key []byte, value []byte) error {
-	if uint64(len(value)) > c.cfg.MaxBlobSize {
-		return ErrBlobTooLarge
-	}
-
 	var blobs [][]byte
 	blobs = append(blobs, value)
 

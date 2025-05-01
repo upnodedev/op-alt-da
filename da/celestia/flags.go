@@ -17,7 +17,6 @@ func AddFlags(cmd *cobra.Command) {
 	cmd.Flags().String(AuthToken, DefaultCelestiaConfig().AuthToken, "Celestia auth token")
 	cmd.Flags().String(Namespace, DefaultCelestiaConfig().Namespace, "Celestia namespace")
 	cmd.Flags().Bool(EthFallbackDisabled, DefaultCelestiaConfig().EthFallbackDisabled, "Disable Ethereum fallback")
-	cmd.Flags().Uint64(MaxBlobSize, DefaultCelestiaConfig().MaxBlobSize, "Max blob size")
 	cmd.Flags().Float64(GasPrice, DefaultCelestiaConfig().GasPrice, "Gas price")
 }
 
@@ -34,9 +33,6 @@ func ParseConfig(cmd *cobra.Command) Config {
 	}
 	if ethFallbackDisabled, err := cmd.Flags().GetBool(EthFallbackDisabled); err == nil {
 		cfg.EthFallbackDisabled = ethFallbackDisabled
-	}
-	if maxBlobSize, err := cmd.Flags().GetUint64(MaxBlobSize); err == nil {
-		cfg.MaxBlobSize = maxBlobSize
 	}
 
 	return cfg
