@@ -4,21 +4,35 @@ import (
 	"alt-da/config"
 	"alt-da/evm/contracts"
 	"fmt"
+	"math/big"
+	"strings"
+	"time"
+
 	"github.com/celer-network/goutils/eth"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	ethrpc "github.com/ethereum/go-ethereum/rpc"
-	"math/big"
-	"os"
-	"time"
 )
 
 type Submitter struct {
 	Transactor      *eth.Transactor
 	Client          *ethclient.Client
 	AltDaHubAddress common.Address
+}
+
+func addressFromPrivateKey(privateKey string) (common.Address, error) {
+	// 1. Parse the key ------------------------------------------------------
+	key, err := crypto.HexToECDSA(strings.TrimPrefix(privateKey, "0x"))
+	if err != nil {
+		return common.Address{}, err
+	}
+
+	// 2. Derive the address -------------------------------------------------
+	address := crypto.PubkeyToAddress(key.PublicKey)
+	return address, nil
 }
 
 func NewSubmitter(cfg config.App) (*Submitter, error) {
@@ -28,15 +42,17 @@ func NewSubmitter(cfg config.App) (*Submitter, error) {
 	}
 	ec := ethclient.NewClient(rpcClient)
 
-	ksBytes, err := os.ReadFile(cfg.KeyFile)
+	signer, err := eth.NewSigner(strings.TrimPrefix(cfg.PrivateKey, "0x"), big.NewInt(cfg.ChainId))
 	if err != nil {
 		return nil, err
 	}
 
-	transactor, err := eth.NewTransactor(string(ksBytes), cfg.Passphrase, ec, big.NewInt(cfg.ChainId))
+	address, err := addressFromPrivateKey(cfg.PrivateKey)
 	if err != nil {
 		return nil, err
 	}
+
+	transactor := eth.NewTransactorByExternalSigner(address, signer, ec, big.NewInt(cfg.ChainId))
 
 	altDaHubAddress := common.HexToAddress(cfg.AltDaHubAddr)
 	return &Submitter{Transactor: transactor, Client: ec, AltDaHubAddress: altDaHubAddress}, nil

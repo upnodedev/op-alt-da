@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/spf13/viper"
 	"os"
+
+	"github.com/spf13/viper"
 )
 
 // env constants
@@ -13,8 +14,7 @@ const (
 	PlasmaDaId       = "DA_ID"
 	PlasmaDaHomeDir  = "HOME_DIR"
 	PlasmaEvmRpcUrl  = "EVM_RPC_URL"
-	PlasmaKeyFile    = "KEY_FILE"
-	PlasmaPassphrase = "PASSPHRASE"
+	PlasmaPrivateKey = "PRIVATE_KEY"
 	PlasmaChainId    = "CHAIN_ID"
 	PlasmaHubAddr    = "ALT_DA_HUB_ADDR"
 )
@@ -26,8 +26,7 @@ type App struct {
 	DaID         string `json:"da_id"`
 	HomeDir      string `json:"home_dir"`
 	EvmRpcUrl    string `json:"evm_rpc_url"`
-	KeyFile      string `json:"key_file"`
-	Passphrase   string `json:"passphrase"`
+	PrivateKey   string `json:"private_key"`
 	ChainId      int64  `json:"chain_id"`
 	AltDaHubAddr string `json:"alt_da_hub_addr"`
 }
@@ -42,11 +41,10 @@ func DefaultConfig() App {
 		DA:           "file",
 		DaID:         "0x000c", // it is celestia
 		HomeDir:      homeDir,
-		EvmRpcUrl:    "https://sepolia.optimism.io",
-		KeyFile:      "",
-		Passphrase:   "passphrase",
-		ChainId:      11155420,
-		AltDaHubAddr: "0x865Cb4Ccdc123d5Ac1D8CDC1f967da1Eb111FcAd",
+		EvmRpcUrl:    "https://mainnet.optimism.io",
+		PrivateKey:   "",
+		ChainId:      10,
+		AltDaHubAddr: "0x2F77fDf77E5a13092D08028188B40b691c41FbDe",
 	}
 
 	if homeDir := viper.GetString(PlasmaDaHomeDir); homeDir != "" {
@@ -67,11 +65,8 @@ func DefaultConfig() App {
 	if evmRpcUrl := viper.GetString(PlasmaEvmRpcUrl); evmRpcUrl != "" {
 		cfg.EvmRpcUrl = evmRpcUrl
 	}
-	if keyFile := viper.GetString(PlasmaKeyFile); keyFile != "" {
-		cfg.KeyFile = keyFile
-	}
-	if passphrase := viper.GetString(PlasmaPassphrase); passphrase != "" {
-		cfg.Passphrase = passphrase
+	if privateKey := viper.GetString(PlasmaPrivateKey); privateKey != "" {
+		cfg.PrivateKey = privateKey
 	}
 	if chainId := viper.GetInt64(PlasmaChainId); chainId > 0 {
 		cfg.ChainId = chainId

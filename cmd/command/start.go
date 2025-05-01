@@ -11,9 +11,11 @@ import (
 	"alt-da/evm"
 	"errors"
 	"fmt"
+	"os"
+
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/spf13/cobra"
 	"golang.org/x/exp/slog"
-	"os"
 )
 
 func StartCmd() *cobra.Command {
@@ -35,7 +37,6 @@ func StartCmd() *cobra.Command {
 				return err
 			}
 			var daId [32]byte
-			copy(daId[:], cfgApp.DaID)
 
 			var store da.KVStore
 			switch cfgApp.DA {
@@ -47,18 +48,21 @@ func StartCmd() *cobra.Command {
 				}
 			case celestia.DaCelestia:
 				cfgCelestia := celestia.ParseConfig(cmd)
+				copy(daId[:], crypto.Keccak256Hash([]byte("celestia")).Bytes())
 				store, err = celestia.NewCelestiaStore(cfgCelestia, daId, submitter)
 				if err != nil {
 					return err
 				}
 			case ipfs.DaIpfs:
 				cfgIpfs := ipfs.ParseConfig(cmd)
+				copy(daId[:], crypto.Keccak256Hash([]byte("ipfs")).Bytes())
 				store, err = ipfs.NewIpfsStore(cfgIpfs, daId, submitter)
 				if err != nil {
 					return err
 				}
 			case arweave.DaAr:
 				cfgAr := arweave.ParseConfig(cmd)
+				copy(daId[:], crypto.Keccak256Hash([]byte("arweave")).Bytes())
 				store, err = arweave.NewArStore(cfgAr, daId, submitter)
 				if err != nil {
 					return err
@@ -87,8 +91,7 @@ func AppFlags(cmd *cobra.Command) {
 	cmd.Flags().String("da", "", "data availability layer type (default is file store)")
 	cmd.Flags().String("da-id", "", "data availability layer id (default is 0x000c for celestia)")
 	cmd.Flags().String("evm-rpc-url", "", "the rpc url for the evm")
-	cmd.Flags().String("key-file", "", "the key file of account use for submitting data mapping")
-	cmd.Flags().String("passphrase", "", "the passphrase for the key file")
+	cmd.Flags().String("private-key", "", "the private key of account use for submitting data mapping")
 	cmd.Flags().Int64("chain-id", 0, "the chain id for the evm")
 	cmd.Flags().String("alt-da-hub-addr", "", "the alt da hub address")
 }
@@ -113,11 +116,8 @@ func ParseAppFlags(cmd *cobra.Command) config.App {
 	if evmRpcUrl := cmd.Flag("evm-rpc-url").Value.String(); evmRpcUrl != "" {
 		cfgApp.EvmRpcUrl = evmRpcUrl
 	}
-	if keyFile := cmd.Flag("key-file").Value.String(); keyFile != "" {
-		cfgApp.KeyFile = keyFile
-	}
-	if passphrase := cmd.Flag("passphrase").Value.String(); passphrase != "" {
-		cfgApp.Passphrase = passphrase
+	if privateKey := cmd.Flag("private-key").Value.String(); privateKey != "" {
+		cfgApp.PrivateKey = privateKey
 	}
 	if chainId, err := cmd.Flags().GetInt64("chain-id"); err == nil && chainId > 0 {
 		cfgApp.ChainId = chainId
