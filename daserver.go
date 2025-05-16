@@ -4,6 +4,7 @@ import (
 	"alt-da/common"
 	"alt-da/config"
 	"alt-da/da"
+	"alt-da/da/celestia"
 	"errors"
 	"fmt"
 	"io"
@@ -99,10 +100,13 @@ func (d *DAServer) HandlePut(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		if _, err := d.store.Get(getCommitment.Context(), comm); err == nil {
-			d.logger.Error("Commitment already exists", "err", hexutil.Encode(comm))
-			w.WriteHeader(http.StatusInternalServerError)
-			return
+		// check celestia if commitment on plasma hub
+		if impl, ok := d.store.(*celestia.Store); ok {
+			if impl.GetPlasmaHubComm(getCommitment.Context(), comm) {
+				d.logger.Info("Commitment already exists on plasma hub: ", "comm", comm)
+
+				return
+			}
 		}
 
 		if err = d.store.Put(r.Context(), comm, input); err != nil {
