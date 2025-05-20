@@ -4,13 +4,15 @@ import (
 	"alt-da/common"
 	"alt-da/config"
 	"alt-da/da"
+	"alt-da/da/celestia"
 	"errors"
 	"fmt"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"golang.org/x/exp/slog"
 	"io"
 	"net/http"
 	"path"
+
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"golang.org/x/exp/slog"
 )
 
 type DAServer struct {
@@ -90,13 +92,29 @@ func (d *DAServer) HandlePut(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/put" || r.URL.Path == "/put/" { // without commitment
 		comm := NewKeccak256Commitment(input).Encode()
 
+		// check if the commitment already exists by making a get request
+		getURL := "/get/" + hexutil.Encode(comm)
+		getCommitment, err := http.NewRequest(http.MethodGet, getURL, nil)
+		if err != nil {
+			d.logger.Error("Failed to create new request", "err", err, "url", getURL)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		// check celestia if commitment on plasma hub
+		if impl, ok := d.store.(*celestia.Store); ok {
+			if impl.GetPlasmaHubComm(getCommitment.Context(), comm) {
+				d.logger.Info("Commitment already exists on plasma hub: ", "comm", comm)
+
+				return
+			}
+		}
+
 		if err = d.store.Put(r.Context(), comm, input); err != nil {
 			d.logger.Error("Failed to store commitment to the DA server", "err", err, "comm", comm)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		d.logger.Info("stored commitment", "key", hexutil.Encode(comm), "input_len", len(input))
-
 		if _, err := w.Write([]byte(hexutil.Encode(comm))); err != nil {
 			d.logger.Error("Failed to write commitment request body", "err", err, "comm", comm)
 			w.WriteHeader(http.StatusInternalServerError)
